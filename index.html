@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <!-- ============================================================
+         META TAGY
+         ============================================================ -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+          content="Foot Studio Violet — profesionální manikúra, pedikúra a gelové nehty. Rezervujte si termín online." />
+    <meta name="theme-color" content="#7c3aed" />
+
+    <!-- Open Graph (náhled při sdílení na sociálních sítích) -->
+    <meta property="og:title"       content="Foot Studio Violet" />
+    <meta property="og:description" content="Profesionální péče o nehty. Rezervujte online." />
+    <meta property="og:type"        content="website" />
+
+    <title>Foot Studio Violet</title>
+
+    <!-- ============================================================
+         CSS
+         ============================================================ -->
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Google Fonts — Playfair Display + Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
+          rel="stylesheet" />
+
+    <!-- ============================================================
+         FIREBASE SDK
+         ============================================================ -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <!-- ============================================================
+         EMAILJS SDK
+         ============================================================ -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+</head>
+
+<body>
+
+    <!-- ============================================================
+         NAVBAR
+         ============================================================ -->
+    <header id="navbar" class="navbar" role="banner">
+        <div class="navbar__inner container">
+
+            <!-- Logo -->
+            <a href="#uvod"
+               class="navbar__logo"
+               onclick="scrollToSection('uvod'); return false;"
+               aria-label="Studio Violet — přejít na úvod">
+                <span class="navbar__logo-icon" aria-hidden="true">🌸</span>
+                <span class="navbar__logo-text">Studio <em>Violet</em></span>
+            </a>
+
+            <!-- Navigační odkazy (desktop) -->
+            <nav id="navLinks" class="navbar__links" aria-label="Hlavní navigace">
+                <a href="#uvod"      onclick="scrollToSection('uvod');      closeMenu(); return false;">Úvod</a>
+                <a href="#sluzby"    onclick="scrollToSection('sluzby');    closeMenu(); return false;">Služby</a>
+                <a href="#rezervace" onclick="scrollToSection('rezervace'); closeMenu(); return false;">Rezervace</a>
+                <a href="#kontakt"   onclick="scrollToSection('kontakt');   closeMenu(); return false;">Kontakt</a>
+            </nav>
+
+            <!-- Tlačítko rezervace (desktop) -->
+            <button class="navbar__cta btn btn--primary"
+                    onclick="scrollToSection('rezervace')"
+                    aria-label="Přejít na rezervaci">
+                Rezervovat
+            </button>
+
+            <!-- Hamburger menu (mobil) -->
+            <button id="hamburger"
+                    class="navbar__hamburger"
+                    onclick="toggleMenu()"
+                    aria-label="Otevřít navigační menu"
+                    aria-expanded="false"
+                    aria-controls="navLinks">
+                <span class="navbar__hamburger-line" aria-hidden="true"></span>
+                <span class="navbar__hamburger-line" aria-hidden="true"></span>
+                <span class="navbar__hamburger-line" aria-hidden="true"></span>
+            </button>
+
+        </div>
+    </header>
+
+    <!-- ============================================================
+         HLAVNÍ OBSAH
+         ============================================================ -->
+    <main id="main" role="main">
+
+        <!-- ========================================================
+             SEKCE: ÚVOD (HERO)
+             ======================================================== -->
+        <section id="uvod" class="hero" aria-labelledby="heroTitle">
+
+            <!-- Animované hvězdičky na pozadí -->
+            <div id="heroStars" class="hero__stars" aria-hidden="true"></div>
+
+            <!-- Obsah hero sekce -->
+            <div class="hero__content container">
+
+                <p class="hero__eyebrow">Vítejte ve Foot Studio Violet</p>
+
+                <h1 id="heroTitle" class="hero__title">
+                    Krásné nehty,<br />
+                    <em>šťastné ruce</em>
+                </h1>
+
+                <p class="hero__subtitle">
+                    Profesionální manikúra, pedikúra a gelové nehty
+                    v příjemném prostředí. Rezervujte si termín online
+                    během pár vteřin.
+                </p>
+
+                <div class="hero__actions">
+                    <button class="btn btn--primary btn--lg"
+                            onclick="scrollToSection('rezervace')"
+                            aria-label="Přejít na rezervaci termínu">
+                        Rezervovat termín
+                    </button>
+                    <button class="btn btn--outline btn--lg"
+                            onclick="scrollToSection('sluzby')"
+                            aria-label="Zobrazit nabídku služeb">
+                        Naše služby
+                    </button>
+                </div>
+
+                <!-- Rychlé statistiky -->
+                <div class="hero__stats" aria-label="Statistiky studia">
+                    <div class="hero__stat">
+                        <strong>500+</strong>
+                        <span>spokojených klientek</span>
+                    </div>
+                    <div class="hero__stat">
+                        <strong>5 let</strong>
+                        <span>zkušeností</span>
+                    </div>
+                    <div class="hero__stat">
+                        <strong>100%</strong>
+                        <span>přírodní materiály</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Dekorativní vlna na přechodu do další sekce -->
+            <div class="hero__wave" aria-hidden="true">
+                <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+                    <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z"
+                          fill="var(--color-bg)" />
+                </svg>
+            </div>
+
+        </section>
+
+        <!-- ========================================================
+             SEKCE: SLUŽBY
+             ======================================================== -->
+        <section id="sluzby" class="services" aria-labelledby="servicesTitle">
+            <div class="container">
+
+                <div class="section-header">
+                    <p class="section-eyebrow">Co nabízíme</p>
+                    <h2 id="servicesTitle" class="section-title">Naše služby</h2>
+                    <p class="section-subtitle">
+                        Vyberte si z naší nabídky profesionálních ošetření.
+                        Každá služba je prováděna s láskou a péčí.
+                    </p>
+                </div>
+
+                <!-- Filtrovací tlačítka -->
+                <div class="services__filters"
+                     role="group"
+                     aria-label="Filtrovat služby podle kategorie">
+                    <button class="services__filter-btn services__filter-btn--active"
+                            data-filter="all"
+                            aria-pressed="true">
+                        Vše
+                    </button>
+                    <button class="services__filter-btn"
+                            data-filter="manicure"
+                            aria-pressed="false">
+                        Manikúra
+                    </button>
+                    <button class="services__filter-btn"
+                            data-filter="pedicure"
+                            aria-pressed="false">
+                        Pedikúra
+                    </button>
+                    <button class="services__filter-btn"
+                            data-filter="gel"
+                            aria-pressed="false">
+                        Gelové nehty
+                    </button>
+                    <button class="services__filter-btn"
+                            data-filter="combined"
+                            aria-pressed="false">
+                        Balíčky
+                    </button>
+                </div>
+
+                <!-- Grid karet služeb — plní ServicesRenderer -->
+                <div id="servicesGrid"
+                     class="services__grid"
+                     aria-label="Nabídka služeb"
+                     aria-live="polite">
+                    <!-- Karty jsou generovány JavaScriptem -->
+                </div>
+
+            </div>
+        </section>
+
+<!-- ========================================================
+     SEKCE: REZERVACE
+     ======================================================== -->
+<section id="rezervace" class="reservation" aria-labelledby="reservationTitle">
+    <div class="container">
+
+        <div class="section-header">
+            <p class="section-eyebrow">Online rezervace</p>
+            <h2 id="reservationTitle" class="section-title">Rezervujte si termín</h2>
+            <p class="section-subtitle">
+                Vyberte den, čas a potvrďte rezervaci. Je to jednoduché!
+            </p>
+        </div>
+
+        <div class="reservation__layout">
+
+            <!-- ================================================
+                 FORMULÁŘ
+                 ================================================ -->
+            <form id="reservationForm"
+                  class="reservation__form"
+                  novalidate
+                  aria-label="Rezervační formulář">
+
+                <!-- Osobní údaje -->
+                <div class="reservation__step">
+                    <div class="reservation__step-header">
+                        <span class="reservation__step-number">1</span>
+                        <h3 class="reservation__step-title">Vaše údaje</h3>
+                    </div>
+
+                    <div class="form__group">
+                        <label for="clientName" class="form__label">
+                            Jméno a příjmení
+                        </label>
+                        <input type="text"
+                               id="clientName"
+                               name="clientName"
+                               class="form__input"
+                               placeholder="Jana Nováková"
+                               required
+                               autocomplete="name"
+                               aria-required="true" />
+                    </div>
+
+                    <div class="form__group">
+                        <label for="clientPhone" class="form__label">
+                            Telefon
+                        </label>
+                        <input type="tel"
+                               id="clientPhone"
+                               name="clientPhone"
+                               class="form__input"
+                               placeholder="+420 123 456 789"
+                               required
+                               autocomplete="tel"
+                               aria-required="true" />
+                    </div>
+
+                    <div class="form__group">
+                      <label for="clientEmail" class="form__label">
+                        Email
+                      </label>
+                      <input type="email"
+                             id="clientEmail"
+                             name="clientEmail"
+                             class="form__input"
+                             placeholder="jana.novakova@email.cz"
+                             required
+                             autocomplete="email"
+                             aria-required="true" />
+                    </div>
+                </div>
+
+                <!-- Výběr služby — NOVÝ KROK (vložit za osobní údaje, před kalendář) -->
+                <div class="reservation__step">
+                    <div class="reservation__step-header">
+                        <span class="reservation__step-number">2</span>
+                        <h3 class="reservation__step-title">Vyberte službu</h3>
+                    </div>
+
+                    <div class="form__group">
+                        <label for="serviceSelect" class="form__label">
+                            Služba
+                        </label>
+                        <select id="serviceSelect"
+                                name="serviceId"
+                                class="form__input form__select"
+                                required
+                                aria-required="true">
+                            <option value="">— Vyberte službu —</option>
+                            <!-- Možnosti jsou generovány JavaScriptem -->
+                        </select>
+                    </div>
+
+                    <!-- Info o vybrané službě (cena, délka) -->
+                    <div id="selectedServiceInfo" class="selected-service-info__box" style="display:none;">
+                        <span>🕐 <strong id="serviceInfoDuration"></strong></span>
+                        <span>💰 <strong id="serviceInfoPrice"></strong></span>
+                        <span id="serviceInfoNote" style="font-style:italic;"></span>
+                    </div>
+                </div>
+
+                <!-- Výběr dne -->
+                <div class="reservation__step">
+                    <div class="reservation__step-header">
+                        <span class="reservation__step-number">3</span>
+                        <h3 class="reservation__step-title">Vyberte den</h3>
+                    </div>
+
+                    <div id="calendarContainer" aria-label="Kalendář pro výběr dne">
+                        <!-- Kalendář je generován JavaScriptem -->
+                    </div>
+                </div>
+
+                <!-- Výběr času -->
+                <div class="reservation__step">
+                    <div class="reservation__step-header">
+                        <span class="reservation__step-number">4</span>
+                        <h3 class="reservation__step-title">Vyberte čas</h3>
+                    </div>
+
+                    <div id="timeSlotsContainer" aria-live="polite">
+                        <p class="time-slots__hint">
+                            Nejprve vyberte den v kalendáři.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Zpráva a odeslání -->
+                <div id="formMessage" class="form-message" role="alert" aria-live="assertive"></div>
+
+                <button type="submit"
+                        id="submitBtn"
+                        class="btn btn--primary btn--full"
+                        aria-label="Odeslat rezervaci">
+                    Rezervovat termín
+                </button>
+
+            </form>
+
+            <!-- ================================================
+                 BOČNÍ PANEL
+                 ================================================ -->
+            <aside class="reservation__sidebar" aria-label="Informace o studiu">
+
+                <div class="sidebar__card">
+                    <h3 class="sidebar__title">
+                        <span aria-hidden="true">🕐</span> Otevírací doba
+                    </h3>
+                    <ul class="sidebar__hours">
+                        <li><span>Pondělí – Pátek</span><strong>8:00 – 17:00</strong></li>
+                        <li><span>Sobota – Neděle</span><strong>Zavřeno</strong></li>
+                    </ul>
+                    <p class="sidebar__note">
+                        Rezervace jsou možné do 16:00.
+                    </p>
+                </div>
+
+                <div class="sidebar__card">
+                    <h3 class="sidebar__title">
+                        <span aria-hidden="true">📍</span> Kde nás najdete
+                    </h3>
+                    <address class="sidebar__address" data-config="sidebar-address">
+                        Rosnice<br />
+                        Karlovy Vary, 350 01
+                    </address>
+                </div>
+
+                <div class="sidebar__card sidebar__card--highlight">
+                    <h3 class="sidebar__title">
+                        <span aria-hidden="true">💜</span> Proč my?
+                    </h3>
+                    <ul class="sidebar__benefits">
+                        <li>✦ Certifikovaní specialisté</li>
+                        <li>✦ Prémiové materiály</li>
+                        <li>✦ Příjemná atmosféra</li>
+                        <li>✦ Potvrzení telefonicky</li>
+                    </ul>
+                </div>
+
+            </aside>
+
+        </div>
+
+    </div>
+</section>
+
+        <!-- ========================================================
+             SEKCE: KONTAKT
+             ======================================================== -->
+        <section id="kontakt" class="contact" aria-labelledby="contactTitle">
+            <div class="container">
+
+                <div class="section-header">
+                    <p class="section-eyebrow">Kontakt</p>
+                    <h2 id="contactTitle" class="section-title">Spojte se s námi</h2>
+                </div>
+
+                <div class="contact__grid">
+
+                    <div class="contact__card">
+                        <div class="contact__icon" aria-hidden="true">📞</div>
+                        <h3 class="contact__label">Telefon</h3>
+                        <a href="tel:+420123456789"
+                           class="contact__value"
+                           data-config="phone-link"
+                           aria-label="Zavolat na číslo">
+                            <span data-config="phone">+420 123 456 789</span>
+                        </a>
+                    </div>
+
+                    <div class="contact__card">
+                        <div class="contact__icon" aria-hidden="true">✉️</div>
+                        <h3 class="contact__label">E-mail</h3>
+                        <a href="mailto:info@footstudioviolet.cz"
+                           class="contact__value"
+                           data-config="email-link"
+                           aria-label="Napsat e-mail">
+                            <span data-config="email">info@footstudioviolet.cz</span>
+                        </a>
+                    </div>
+
+                    <div class="contact__card">
+                        <div class="contact__icon" aria-hidden="true">📍</div>
+                        <h3 class="contact__label">Adresa</h3>
+                        <address class="contact__value" data-config="address">
+                            Krásná ulice 42<br />Praha 2, 120 00
+                        </address>
+                    </div>
+
+                    <div class="contact__card">
+                        <div class="contact__icon" aria-hidden="true">📸</div>
+                        <h3 class="contact__label">Instagram</h3>
+                        <a href="https://instagram.com/footstudioviolet"
+                           class="contact__value"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           aria-label="Sledovat nás na Instagramu (otevře se v nové záložce)">
+                            @footstudioviolet
+                        </a>
+                    </div>
+
+                    <div class="contact__card">
+                        <div class="contact__icon" aria-hidden="true">👤</div>
+                        <h3 class="contact__label">Provozovatel</h3>
+                        <p class="contact__value" data-config="operator-name">
+                            Neuvedeno
+                        </p>
+                    </div>
+
+                    <div class="contact__card contact__card--map">
+                        <div class="contact__icon" aria-hidden="true">🗺️</div>
+                        <h3 class="contact__label">Kde nás najdete</h3>
+                        <div class="contact__map">
+                            <iframe
+                                data-config="map-embed-src"
+                                src="https://maps.google.com/maps?q=Praha&output=embed"
+                                title="Mapa polohy studia"
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"
+                                aria-label="Mapa studia">
+                            </iframe>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer__inner">
+
+                <p class="footer__brand">
+                    <span aria-hidden="true">🌸</span>
+                    Foot Studio <em>Violet</em>
+                </p>
+
+                <p class="footer__copy">
+                    &copy; <span id="footerYear"></span> Foot Studio Violet.
+                    Všechna práva vyhrazena.
+                </p>
+
+                <nav class="footer__nav" aria-label="Patičková navigace">
+                    <a href="#uvod"      onclick="scrollToSection('uvod');      return false;">Úvod</a>
+                    <a href="#sluzby"    onclick="scrollToSection('sluzby');    return false;">Služby</a>
+                    <a href="#rezervace" onclick="scrollToSection('rezervace'); return false;">Rezervace</a>
+                    <a href="#kontakt"   onclick="scrollToSection('kontakt');   return false;">Kontakt</a>
+                </nav>
+
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         AKTUÁLNÍ ROK V PATIČCE
+         ============================================================ -->
+    <script>
+        document.getElementById("footerYear").textContent = new Date().getFullYear();
+    </script>
+
+    <!-- ============================================================
+         JAVASCRIPT — CONFIG (musí být před ostatními JS soubory)
+         ============================================================ -->
+    <script src="config/firebase-config.js"></script>
+    <script src="config/emailjs-config.js"></script>
+    <script src="config/services.js"></script>
+    <script src="config/contacts.js"></script>
+
+    <!-- ============================================================
+         JAVASCRIPT — MODULY
+         ============================================================ -->
+    <script src="js/configLoader.js"></script>
+    <script src="js/firebaseService.js"></script>
+    <script src="js/emailService.js"></script>
+    <script src="js/storageService.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/heroStars.js"></script>
+    <script src="js/servicesRenderer.js"></script>
+    <script src="js/reservationForm.js"></script>
+
+    <!-- ============================================================
+         JAVASCRIPT — HLAVNÍ VSTUPNÍ BOD (musí být poslední)
+         ============================================================ -->
+    <script src="js/main.js"></script>
+
+</body>
+</html>

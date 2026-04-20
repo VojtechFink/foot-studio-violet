@@ -1,0 +1,1496 @@
+/* ============================================================
+   FOOT STUDIO VIOLET — Hlavní stylesheet
+   Autor: generováno pro Foot Studio Violet
+   Popis: Globální styly, proměnné, komponenty
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. GOOGLE FONTS IMPORT
+   ------------------------------------------------------------ */
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600&display=swap');
+
+/* ------------------------------------------------------------
+   2. CSS PROMĚNNÉ
+   ------------------------------------------------------------ */
+:root {
+    /* Hlavní barvy */
+    --color-bg:            #0a0a0f;
+    --color-bg-secondary:  #12101a;
+    --color-bg-soft:       #1a1625;
+    --color-surface:       #1a1625;
+    --color-surface-light: #241e33;
+
+    /* Fialová paleta */
+    --color-primary:       #9b59b6;
+    --color-primary-light: #c39bd3;
+    --color-primary-dark:  #6c3483;
+    --color-accent:        #d7bde2;
+
+    /* Růžové akcenty */
+    --color-pink:          #e91e8c;
+    --color-pink-light:    #f48fb1;
+
+    /* Text */
+    --color-text:          #f0e6ff;
+    --color-text-muted:    #a89bc2;
+    --color-text-dark:     #6b5b8a;
+
+    /* Utility */
+    --color-white:         #ffffff;
+    --color-border:        rgba(155, 89, 182, 0.25);
+    --color-error:         #ff4757;
+
+    /* Glow efekty */
+    --glow-purple:         0 0 20px rgba(155, 89, 182, 0.5);
+    --glow-pink:           0 0 20px rgba(233, 30, 140, 0.4);
+    --glow-text:           0 0 30px rgba(195, 155, 211, 0.8);
+
+    /* Gradienty */
+    --gradient-primary:    linear-gradient(135deg, #6c3483, #9b59b6, #e91e8c);
+    --gradient-dark:       linear-gradient(180deg, #0a0a0f 0%, #12101a 100%);
+    --gradient-surface:    linear-gradient(135deg, #1a1625, #241e33);
+    --gradient-hero:       linear-gradient(180deg,
+                               rgba(10,10,15,0.3) 0%,
+                               rgba(108,52,131,0.2) 50%,
+                               rgba(10,10,15,0.8) 100%);
+
+    /* Typografie */
+    --font-script:         'Great Vibes', cursive;
+    --font-heading:        'Playfair Display', serif;
+    --font-body:           'Lato', sans-serif;
+
+    /* Rozměry */
+    --nav-height:          70px;
+    --border-radius:       12px;
+    --border-radius-lg:    20px;
+    --radius-sm:           6px;
+    --radius-md:           10px;
+    --radius-lg:           16px;
+
+    /* Přechody */
+    --transition:          all 0.3s ease;
+    --transition-slow:     all 0.6s ease;
+    --transition-fast:     all 0.15s ease;
+}
+
+/* ------------------------------------------------------------
+   3. RESET & ZÁKLADNÍ STYLY
+   ------------------------------------------------------------ */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.7;
+    overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-light);
+}
+
+/* ------------------------------------------------------------
+   4. TYPOGRAFIE
+   ------------------------------------------------------------ */
+h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    line-height: 1.3;
+    color: var(--color-text);
+}
+
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+h2 { font-size: clamp(1.6rem, 3vw, 2.5rem); }
+h3 { font-size: clamp(1.2rem, 2vw, 1.6rem); }
+
+.script-font {
+    font-family: var(--font-script);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    color: var(--color-primary-light);
+    text-shadow: var(--glow-text);
+}
+
+p {
+    color: var(--color-text-muted);
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+a {
+    color: var(--color-primary-light);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+a:hover {
+    color: var(--color-accent);
+}
+
+/* ------------------------------------------------------------
+   5. LAYOUT UTILITY TŘÍDY
+   ------------------------------------------------------------ */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.section {
+    padding: 80px 0;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-title {
+    font-family: var(--font-script);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: var(--color-primary-light);
+    text-shadow: var(--glow-text);
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.section-divider {
+    width: 80px;
+    height: 2px;
+    background: var(--gradient-primary);
+    margin: 1rem auto;
+    border-radius: 2px;
+    box-shadow: var(--glow-purple);
+}
+
+/* ------------------------------------------------------------
+   6. NAVIGACE
+   ------------------------------------------------------------ */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--nav-height);
+    z-index: 1000;
+    transition: var(--transition);
+    background: transparent;
+}
+
+.navbar.scrolled {
+    background: rgba(10, 10, 15, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(155, 89, 182, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.navbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.navbar__logo {
+    font-family: var(--font-script);
+    font-size: 1.8rem;
+    color: var(--color-primary-light);
+    text-shadow: var(--glow-text);
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.navbar__links {
+    display: flex;
+    list-style: none;
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.navbar__links a {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    position: relative;
+    padding-bottom: 4px;
+}
+
+.navbar__links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--gradient-primary);
+    transition: var(--transition);
+}
+
+.navbar__links a:hover {
+    color: var(--color-primary-light);
+}
+
+.navbar__links a:hover::after {
+    width: 100%;
+}
+
+.navbar__links a.active {
+    color: var(--color-primary-light);
+}
+
+.navbar__links a.active::after {
+    width: 100%;
+}
+
+.navbar__cta {
+    background: var(--gradient-primary);
+    color: var(--color-text) !important;
+    padding: 8px 20px !important;
+    border-radius: 25px;
+    font-weight: 700 !important;
+    box-shadow: var(--glow-purple);
+    letter-spacing: 1px !important;
+}
+
+.navbar__cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(155, 89, 182, 0.6) !important;
+    color: var(--color-white) !important;
+}
+
+.navbar__cta::after {
+    display: none !important;
+}
+
+.navbar__hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.navbar__hamburger span {
+    display: block;
+    width: 25px;
+    height: 2px;
+    background: var(--color-primary-light);
+    border-radius: 2px;
+    transition: var(--transition);
+}
+
+.navbar__hamburger.open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+.navbar__hamburger.open span:nth-child(2) {
+    opacity: 0;
+}
+.navbar__hamburger.open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ------------------------------------------------------------
+   7. HERO SEKCE
+   ------------------------------------------------------------ */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    background: var(--color-bg);
+}
+
+.hero__bg {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 20% 20%, rgba(108, 52, 131, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(233, 30, 140, 0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(155, 89, 182, 0.1) 0%, transparent 70%);
+    animation: bgPulse 8s ease-in-out infinite alternate;
+}
+
+@keyframes bgPulse {
+    0%   { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.hero__star {
+    pointer-events: none;
+    user-select:    none;
+    will-change:    opacity, transform;
+}
+
+@keyframes starTwinkle {
+    0%, 100% { opacity: 0;   transform: scale(0.8) rotate(0deg);  }
+    50%       { opacity: 1;   transform: scale(1.2) rotate(15deg); }
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50%       { opacity: 1; transform: scale(1.5); }
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50%       { opacity: 1; transform: scale(1.5); }
+}
+
+.hero__content {
+    position: relative;
+    z-index: 2;
+    padding: 2rem;
+}
+
+.hero__logo-img {
+    max-width: 500px;
+    width: 90%;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 0 30px rgba(155, 89, 182, 0.8));
+    animation: floatLogo 4s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-10px); }
+}
+
+.hero__tagline {
+    font-family: var(--font-heading);
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    color: var(--color-text-muted);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+}
+
+.hero__buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ------------------------------------------------------------
+   8. TLAČÍTKA
+   ------------------------------------------------------------ */
+.btn {
+    display: inline-block;
+    padding: 14px 32px;
+    border-radius: 30px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.btn--primary {
+    background: var(--gradient-primary);
+    color: var(--color-white);
+    box-shadow: var(--glow-purple);
+}
+
+.btn--primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(155, 89, 182, 0.7);
+    color: var(--color-white);
+}
+
+.btn--outline {
+    background: transparent;
+    color: var(--color-primary-light);
+    border: 1px solid var(--color-primary);
+}
+
+.btn--outline:hover {
+    background: rgba(155, 89, 182, 0.15);
+    border-color: var(--color-primary-light);
+    transform: translateY(-3px);
+    color: var(--color-primary-light);
+}
+
+.btn--full {
+    width: 100%;
+    text-align: center;
+}
+
+/* ------------------------------------------------------------
+   9. KARTY SLUŽEB
+   ------------------------------------------------------------ */
+.services {
+    background: var(--color-bg-secondary);
+}
+
+.services__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.service-card {
+    background: var(--gradient-surface);
+    border: 1px solid rgba(155, 89, 182, 0.2);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transform: scaleX(0);
+    transition: var(--transition);
+}
+
+.service-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(155, 89, 182, 0.5);
+    box-shadow: var(--glow-purple), 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.service-card:hover::before {
+    transform: scaleX(1);
+}
+
+.service-card__icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.service-card__name {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    color: var(--color-text);
+    margin-bottom: 0.5rem;
+}
+
+.service-card__description {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.service-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(155, 89, 182, 0.2);
+}
+
+.service-card__price {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    color: var(--color-primary-light);
+    font-weight: 600;
+}
+
+.service-card__duration {
+    font-size: 0.8rem;
+    color: var(--color-text-dark);
+    letter-spacing: 1px;
+}
+
+/* ------------------------------------------------------------
+   10. GALERIE
+   ------------------------------------------------------------ */
+.gallery {
+    background: var(--color-bg);
+}
+
+.gallery__filter {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.gallery__filter-btn {
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(155, 89, 182, 0.3);
+    background: transparent;
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.gallery__filter-btn:hover,
+.gallery__filter-btn.active {
+    background: var(--gradient-primary);
+    color: var(--color-white);
+    border-color: transparent;
+    box-shadow: var(--glow-purple);
+}
+
+.gallery__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.gallery__item {
+    position: relative;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    cursor: pointer;
+}
+
+.gallery__item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-slow);
+}
+
+.gallery__item:hover img {
+    transform: scale(1.08);
+}
+
+.gallery__item-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(108,52,131,0.8), transparent);
+    opacity: 0;
+    transition: var(--transition);
+    display: flex;
+    align-items: flex-end;
+    padding: 1.5rem;
+}
+
+.gallery__item:hover .gallery__item-overlay {
+    opacity: 1;
+}
+
+.gallery__item-label {
+    color: var(--color-white);
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+}
+
+/* Lightbox */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition);
+}
+
+.lightbox.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.lightbox__img {
+    max-width: 90vw;
+    max-height: 85vh;
+    border-radius: var(--border-radius);
+    box-shadow: var(--glow-purple);
+}
+
+.lightbox__close {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: none;
+    border: none;
+    color: var(--color-white);
+    font-size: 2rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.lightbox__close:hover {
+    color: var(--color-primary-light);
+    transform: rotate(90deg);
+}
+
+/* ------------------------------------------------------------
+   11. REZERVACE — layout
+   ------------------------------------------------------------ */
+.reservation {
+    background: var(--color-bg-secondary);
+}
+
+.reservation__layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Formulář */
+.reservation__form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Krok */
+.reservation__step {
+    background: var(--gradient-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.reservation__step-header {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    margin-bottom: 1.25rem;
+}
+
+.reservation__step-number {
+    width: 2rem;
+    height: 2rem;
+    background: var(--gradient-primary);
+    color: var(--color-white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+    box-shadow: var(--glow-purple);
+}
+
+.reservation__step-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+    font-family: var(--font-heading);
+    letter-spacing: 1px;
+}
+
+/* Formulářová pole */
+.form__group {
+    margin-bottom: 1.25rem;
+}
+
+.form__label {
+    display: block;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+}
+
+.form__input {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(10, 10, 15, 0.6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    transition: var(--transition);
+    outline: none;
+}
+
+.form__input::placeholder {
+    color: var(--color-text-dark);
+}
+
+.form__input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.15);
+    background: rgba(10, 10, 15, 0.8);
+}
+
+.form__input.input--error {
+    border-color: var(--color-error);
+    box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.15);
+}
+
+/* Select — výběr služby */
+.form__select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239b59b6' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+.form__select option {
+    background: #1a1625;
+    color: var(--color-text);
+}
+
+.field-error {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--color-error);
+    margin-top: 0.35rem;
+}
+
+/* Zpráva formuláře */
+.form-message {
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.form-message:empty {
+    display: none;
+}
+
+.form-message--success {
+    background: rgba(46, 213, 115, 0.12);
+    border: 1px solid rgba(46, 213, 115, 0.35);
+    color: #2ed573;
+}
+
+.form-message--error {
+    background: rgba(255, 71, 87, 0.12);
+    border: 1px solid rgba(255, 71, 87, 0.35);
+    color: var(--color-error);
+}
+
+/* Spinner */
+.spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: var(--color-white);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 0.25rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ------------------------------------------------------------
+   12. VÝBĚR SLUŽBY — picker
+   ------------------------------------------------------------ */
+.services-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+
+.service-pick-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.875rem 1rem;
+    background: rgba(10, 10, 15, 0.4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-align: left;
+    transition: var(--transition-fast);
+    width: 100%;
+}
+
+.service-pick-btn:hover {
+    border-color: var(--color-primary);
+    background: rgba(155, 89, 182, 0.1);
+}
+
+.service-pick-btn--selected {
+    border-color: var(--color-primary) !important;
+    background: rgba(155, 89, 182, 0.15) !important;
+    box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.service-pick-btn__name {
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: 0.95rem;
+}
+
+.service-pick-btn__meta {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    margin-left: 1rem;
+}
+
+/* Info o vybrané službě */
+.selected-service-info__box {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(155, 89, 182, 0.1);
+    border-left: 3px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+.selected-service-info__box strong {
+    color: var(--color-primary-light);
+    font-weight: 600;
+}
+
+/* ------------------------------------------------------------
+   13. KALENDÁŘ
+   ------------------------------------------------------------ */
+.calendar {
+    user-select: none;
+}
+
+.calendar__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.calendar__nav {
+    background: rgba(10, 10, 15, 0.4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+}
+
+.calendar__nav:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+}
+
+.calendar__month-label {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-text);
+    font-family: var(--font-heading);
+}
+
+.calendar__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.calendar__weekdays span {
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    padding: 0.25rem 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.calendar__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+}
+
+.calendar__day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: default;
+    border: none;
+    background: none;
+    color: var(--color-text-muted);
+}
+
+.calendar__day--empty {
+    background: transparent;
+}
+
+.calendar__day--disabled {
+    color: var(--color-text-dark);
+    opacity: 0.5;
+}
+
+.calendar__day--available {
+    cursor: pointer;
+    color: var(--color-text);
+    background: rgba(10, 10, 15, 0.4);
+    border: 1px solid var(--color-border);
+    transition: var(--transition-fast);
+}
+
+.calendar__day--available:hover {
+    background: rgba(155, 89, 182, 0.2);
+    border-color: var(--color-primary);
+    color: var(--color-primary-light);
+}
+
+.calendar__day--today {
+    border: 2px solid var(--color-primary) !important;
+    color: var(--color-primary-light) !important;
+    font-weight: 700;
+}
+
+.calendar__day--selected {
+    background: var(--gradient-primary) !important;
+    color: var(--color-white) !important;
+    border-color: transparent !important;
+    font-weight: 700;
+    box-shadow: var(--glow-purple);
+}
+
+/* ------------------------------------------------------------
+   14. ČASOVÉ SLOTY
+   ------------------------------------------------------------ */
+.time-slots__hint,
+.time-slots__loading,
+.time-slots__error {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    padding: 1rem 0;
+}
+
+.time-slots__error {
+    color: var(--color-error);
+}
+
+.time-slots__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.625rem;
+}
+
+.time-slot {
+    padding: 0.625rem 0.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    font-family: var(--font-body);
+}
+
+.time-slot--free {
+    background: rgba(10, 10, 15, 0.4);
+    color: var(--color-text);
+}
+
+.time-slot--free:hover {
+    background: rgba(155, 89, 182, 0.2);
+    border-color: var(--color-primary);
+    color: var(--color-primary-light);
+}
+
+.time-slot--selected {
+    background: var(--gradient-primary) !important;
+    color: var(--color-white) !important;
+    border-color: transparent !important;
+    font-weight: 700;
+    box-shadow: var(--glow-purple);
+}
+
+.time-slot--booked {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--color-text-dark);
+    cursor: not-allowed;
+    text-decoration: line-through;
+    opacity: 0.5;
+}
+
+/* ------------------------------------------------------------
+   15. BOČNÍ PANEL (SIDEBAR)
+   ------------------------------------------------------------ */
+.reservation__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    position: sticky;
+    top: calc(var(--nav-height) + 1rem);
+}
+
+.sidebar__card {
+    background: var(--gradient-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+}
+
+.sidebar__card--highlight {
+    border-color: rgba(155, 89, 182, 0.5);
+    box-shadow: var(--glow-purple);
+}
+
+.sidebar__title {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--color-primary-light);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sidebar__hours {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sidebar__hours li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(155, 89, 182, 0.1);
+}
+
+.sidebar__hours li:last-child {
+    border-bottom: none;
+}
+
+.sidebar__hours strong {
+    color: var(--color-primary-light);
+    font-weight: 600;
+}
+
+.sidebar__note {
+    font-size: 0.78rem;
+    color: var(--color-text-dark);
+    margin-top: 0.75rem;
+    font-style: italic;
+}
+
+.sidebar__address {
+    font-style: normal;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    line-height: 1.8;
+}
+
+.sidebar__benefits {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sidebar__benefits li {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+/* ------------------------------------------------------------
+   16. KONTAKT
+   ------------------------------------------------------------ */
+.contact {
+    background: var(--color-bg);
+}
+
+.contact__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+.contact__info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.contact__info-icon {
+    font-size: 1.5rem;
+    min-width: 40px;
+    text-align: center;
+}
+
+.contact__info-label {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-text-dark);
+    margin-bottom: 0.25rem;
+}
+
+.contact__info-value {
+    color: var(--color-text);
+    font-size: 1rem;
+}
+
+.contact__map {
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    border: 1px solid rgba(155, 89, 182, 0.3);
+    box-shadow: var(--glow-purple);
+}
+
+.contact__map iframe {
+    width: 100%;
+    height: 350px;
+    border: none;
+    display: block;
+}
+
+.opening-hours__grid {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.opening-hours__row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(155, 89, 182, 0.1);
+    font-size: 0.9rem;
+}
+
+.opening-hours__day {
+    color: var(--color-text-muted);
+}
+
+.opening-hours__time {
+    color: var(--color-primary-light);
+    font-weight: 400;
+}
+
+.opening-hours__closed {
+    color: var(--color-text-dark);
+}
+
+/* ------------------------------------------------------------
+   17. ADMIN PANEL
+   ------------------------------------------------------------ */
+.admin {
+    background: var(--color-bg);
+    min-height: 100vh;
+    padding-top: calc(var(--nav-height) + 2rem);
+}
+
+.admin__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.admin__filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.admin__table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid rgba(155, 89, 182, 0.2);
+}
+
+.admin__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.admin__table th {
+    background: var(--color-surface);
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    font-weight: 400;
+    border-bottom: 1px solid rgba(155, 89, 182, 0.2);
+}
+
+.admin__table td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(155, 89, 182, 0.1);
+    color: var(--color-text);
+    background: var(--color-bg-secondary);
+    vertical-align: middle;
+}
+
+.admin__table tr:hover td {
+    background: var(--color-surface);
+}
+
+.admin__table tr:last-child td {
+    border-bottom: none;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.badge--confirmed {
+    background: rgba(46, 213, 115, 0.15);
+    color: #2ed573;
+    border: 1px solid rgba(46, 213, 115, 0.3);
+}
+
+.badge--pending {
+    background: rgba(255, 165, 0, 0.15);
+    color: #ffa500;
+    border: 1px solid rgba(255, 165, 0, 0.3);
+}
+
+.badge--cancelled {
+    background: rgba(255, 71, 87, 0.15);
+    color: var(--color-error);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+}
+
+.btn--danger {
+    background: rgba(255, 71, 87, 0.15);
+    color: var(--color-error);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn--danger:hover {
+    background: rgba(255, 71, 87, 0.3);
+}
+
+.btn--sm {
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+}
+
+/* ------------------------------------------------------------
+   18. PATIČKA
+   ------------------------------------------------------------ */
+.footer {
+    background: var(--color-bg-secondary);
+    border-top: 1px solid rgba(155, 89, 182, 0.2);
+    padding: 3rem 0 1.5rem;
+    text-align: center;
+}
+
+.footer__logo {
+    font-family: var(--font-script);
+    font-size: 2.5rem;
+    color: var(--color-primary-light);
+    text-shadow: var(--glow-text);
+    margin-bottom: 1rem;
+}
+
+.footer__links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    list-style: none;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.footer__links a {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.footer__links a:hover {
+    color: var(--color-primary-light);
+}
+
+.footer__copy {
+    font-size: 0.8rem;
+    color: var(--color-text-dark);
+}
+
+/* ------------------------------------------------------------
+   19. ANIMACE & UTILITY
+   ------------------------------------------------------------ */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.text-center { text-align: center; }
+.mt-1 { margin-top: 1rem; }
+.mt-2 { margin-top: 2rem; }
+.mb-1 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 2rem; }
+
+/* ------------------------------------------------------------
+   20. RESPONZIVITA
+   ------------------------------------------------------------ */
+@media (max-width: 1024px) {
+    .reservation__layout {
+        grid-template-columns: 1fr;
+    }
+
+    .reservation__sidebar {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar__links {
+        position: fixed;
+        top: var(--nav-height);
+        left: 0;
+        right: 0;
+        background: rgba(10, 10, 15, 0.98);
+        backdrop-filter: blur(10px);
+        flex-direction: column;
+        padding: 2rem;
+        gap: 1.5rem;
+        transform: translateY(-100%);
+        opacity: 0;
+        pointer-events: none;
+        transition: var(--transition);
+        border-bottom: 1px solid rgba(155, 89, 182, 0.3);
+    }
+
+    .navbar__links.open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .navbar__hamburger {
+        display: flex;
+    }
+
+    .contact__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .reservation__step {
+        padding: 1.25rem;
+    }
+
+    .section {
+        padding: 60px 0;
+    }
+
+    .admin__table th,
+    .admin__table td {
+        padding: 0.75rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero__buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .gallery__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .time-slots__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
