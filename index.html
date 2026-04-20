@@ -108,12 +108,12 @@
                 <p class="hero__eyebrow">Vítejte ve Foot Studio Violet</p>
 
                 <h1 id="heroTitle" class="hero__title">
-                    Krásné nehty,<br />
-                    <em>šťastné ruce</em>
+                    Nohy jako v bavlnce,<br />
+                    <em>chůze jako v peřince</em>
                 </h1>
 
                 <p class="hero__subtitle">
-                    Profesionální manikúra, pedikúra a gelové nehty
+                    Profesionální pedikúra a gellak
                     v příjemném prostředí. Rezervujte si termín online
                     během pár vteřin.
                 </p>
@@ -134,16 +134,16 @@
                 <!-- Rychlé statistiky -->
                 <div class="hero__stats" aria-label="Statistiky studia">
                     <div class="hero__stat">
-                        <strong>500+</strong>
-                        <span>spokojených klientek</span>
+                        <strong></strong>
+                        <span></span>
                     </div>
                     <div class="hero__stat">
-                        <strong>5 let</strong>
-                        <span>zkušeností</span>
+                        <strong></strong>
+                        <span></span>
                     </div>
                     <div class="hero__stat">
-                        <strong>100%</strong>
-                        <span>přírodní materiály</span>
+                        <strong></strong>
+                        <span></span>
                     </div>
                 </div>
 
@@ -174,36 +174,6 @@
                     </p>
                 </div>
 
-                <!-- Filtrovací tlačítka -->
-                <div class="services__filters"
-                     role="group"
-                     aria-label="Filtrovat služby podle kategorie">
-                    <button class="services__filter-btn services__filter-btn--active"
-                            data-filter="all"
-                            aria-pressed="true">
-                        Vše
-                    </button>
-                    <button class="services__filter-btn"
-                            data-filter="manicure"
-                            aria-pressed="false">
-                        Manikúra
-                    </button>
-                    <button class="services__filter-btn"
-                            data-filter="pedicure"
-                            aria-pressed="false">
-                        Pedikúra
-                    </button>
-                    <button class="services__filter-btn"
-                            data-filter="gel"
-                            aria-pressed="false">
-                        Gelové nehty
-                    </button>
-                    <button class="services__filter-btn"
-                            data-filter="combined"
-                            aria-pressed="false">
-                        Balíčky
-                    </button>
-                </div>
 
                 <!-- Grid karet služeb — plní ServicesRenderer -->
                 <div id="servicesGrid"
@@ -345,6 +315,25 @@
                     </div>
                 </div>
 
+                <!-- Poznámka -->
+                <div class="reservation__step">
+                    <div class="reservation__step-header">
+                        <span class="reservation__step-number">5</span>
+                        <h3 class="reservation__step-title">Poznámka (volitelné)</h3>
+                    </div>
+
+                    <div class="form__group">
+                        <label for="clientNote" class="form__label">
+                            Poznámka k rezervaci
+                        </label>
+                        <textarea id="clientNote"
+                                  name="clientNote"
+                                  class="form__input"
+                                  rows="3"
+                                  placeholder="Např. preferuji odpolední termín nebo upřesnění služby."></textarea>
+                    </div>
+                </div>
+
                 <!-- Zpráva a odeslání -->
                 <div id="formMessage" class="form-message" role="alert" aria-live="assertive"></div>
 
@@ -383,6 +372,16 @@
                         Rosnice<br />
                         Karlovy Vary, 350 01
                     </address>
+                    <div class="contact__map">
+                        <iframe
+                            data-config="map-embed-src"
+                            src="https://maps.google.com/maps?q=Praha&output=embed"
+                            title="Mapa polohy studia"
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            aria-label="Mapa studia">
+                        </iframe>
+                    </div>
                 </div>
 
                 <div class="sidebar__card sidebar__card--highlight">
@@ -455,7 +454,7 @@
                            target="_blank"
                            rel="noopener noreferrer"
                            aria-label="Sledovat nás na Instagramu (otevře se v nové záložce)">
-                            @footstudioviolet
+                            @studioviolet
                         </a>
                     </div>
 
@@ -465,21 +464,6 @@
                         <p class="contact__value" data-config="operator-name">
                             Neuvedeno
                         </p>
-                    </div>
-
-                    <div class="contact__card contact__card--map">
-                        <div class="contact__icon" aria-hidden="true">🗺️</div>
-                        <h3 class="contact__label">Kde nás najdete</h3>
-                        <div class="contact__map">
-                            <iframe
-                                data-config="map-embed-src"
-                                src="https://maps.google.com/maps?q=Praha&output=embed"
-                                title="Mapa polohy studia"
-                                loading="lazy"
-                                referrerpolicy="no-referrer-when-downgrade"
-                                aria-label="Mapa studia">
-                            </iframe>
-                        </div>
                     </div>
 
                 </div>
@@ -498,20 +482,14 @@
 
                 <p class="footer__brand">
                     <span aria-hidden="true">🌸</span>
-                    Foot Studio <em>Violet</em>
+                    Studio <em>Violet</em>
                 </p>
 
                 <p class="footer__copy">
-                    &copy; <span id="footerYear"></span> Foot Studio Violet.
+                    &copy; <span id="footerYear"></span> Studio Violet.
                     Všechna práva vyhrazena.
                 </p>
 
-                <nav class="footer__nav" aria-label="Patičková navigace">
-                    <a href="#uvod"      onclick="scrollToSection('uvod');      return false;">Úvod</a>
-                    <a href="#sluzby"    onclick="scrollToSection('sluzby');    return false;">Služby</a>
-                    <a href="#rezervace" onclick="scrollToSection('rezervace'); return false;">Rezervace</a>
-                    <a href="#kontakt"   onclick="scrollToSection('kontakt');   return false;">Kontakt</a>
-                </nav>
 
             </div>
         </div>
