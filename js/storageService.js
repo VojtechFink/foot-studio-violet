@@ -79,6 +79,11 @@ class StorageService {
             errors.push("Vyberte prosím čas.");
         }
 
+        // GDPR souhlas
+        if (data.privacyConsent !== true) {
+            errors.push("Pro odeslání rezervace je nutný souhlas se zpracováním osobních údajů.");
+        }
+
         return {
             valid:  errors.length === 0,
             errors: errors,
@@ -305,38 +310,54 @@ class StorageService {
             date:        formData.date,
             time:        formData.time,
             clientNote:  formData.clientNote ? formData.clientNote.trim() : "",
+            privacyConsent: true,
+            privacyConsentAt: formData.privacyConsentAt || new Date().toISOString(),
             bookedSlots: bookedSlots,
         };
 
-        try {
-            // 3. Uloží do Firebase
-            const reservationId = await firebaseService.saveReservation(reservationData);
+         try {
+             // 3. Uloží do Firebase
+             const reservationId = await firebaseService.saveReservation(reservationData);
 
-            // 4. Odešle emaily (chyba emailu neblokuje úspěch rezervace)
-            await emailService.sendAll({
-                ...reservationData,
-                id: reservationId,
-            });
+             // 4. Zaznamenání do analytiky
+             const selectedService = SERVICES_CONFIG.find(s => s.id === Number(formData.serviceId));
+             analyticsService.trackReservationCompleted({
+                 id: reservationId,
+                 serviceId: formData.serviceId,
+                 serviceName: selectedService ? selectedService.name : 'Neznámá služba',
+                 date: formData.date,
+                 time: formData.time,
+                 duration: selectedService ? selectedService.duration : 60,
+                 price: selectedService ? selectedService.price : 0,
+                 clientEmail: reservationData.clientEmail,
+                 clientName: reservationData.clientName
+             });
 
-            // 5. Volitelný sync do kalendáře (neblokuje úspěch rezervace)
-            await this.syncReservationToCalendar({
-                ...reservationData,
-                id: reservationId,
-            });
+             // 5. Odešle emaily (chyba emailu neblokuje úspěch rezervace)
+             await emailService.sendAll({
+                 ...reservationData,
+                 id: reservationId,
+             });
 
-            console.log("✅ StorageService: rezervace kompletně zpracována, ID →", reservationId);
+             // 6. Volitelný sync do kalendáře (neblokuje úspěch rezervace)
+             await this.syncReservationToCalendar({
+                 ...reservationData,
+                 id: reservationId,
+             });
 
-            return {
-                success: true,
-                message: `Děkujeme, ${reservationData.clientName.split(" ")[0]}! Vaše rezervace byla přijata. Brzy vás budeme kontaktovat s potvrzením termínu.`,
-                id:      reservationId,
-            };
+             console.log("✅ StorageService: rezervace kompletně zpracována, ID →", reservationId);
 
-        } catch (error) {
-            console.error("❌ StorageService: chyba při ukládání rezervace →", error);
+             return {
+                 success: true,
+                 message: `Děkujeme, ${reservationData.clientName.split(" ")[0]}! Vaše rezervace byla přijata. Brzy vás budeme kontaktovat s potvrzením termínu.`,
+                 id:      reservationId,
+             };
 
-            return {
-                success: false,
+         } catch (error) {
+             console.error("❌ StorageService: chyba při ukládání rezervace →", error);
+
+             return {
+                 success: false,
                 message: "Omlouváme se, při zpracování rezervace došlo k chybě. Zkuste to prosím znovu nebo nás kontaktujte telefonicky.",
             };
         }

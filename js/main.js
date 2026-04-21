@@ -5,12 +5,14 @@
    Inicializuje všechny moduly ve správném pořadí:
 
    1. Firebase (databáze)
-   2. EmailJS (odesílání emailů)
-   3. StorageService (propojení Firebase + Email)
-   4. Navigation (navbar, scroll, hamburger)
-   5. HeroStars (animované hvězdičky)
-   6. ServicesRenderer (karty služeb)
-   7. ReservationForm (rezervační formulář)
+   2. AnalyticsService (sledování akcí)
+   3. EmailJS (odesílání emailů)
+   4. StorageService (propojení Firebase + Email)
+   5. Navigation (navbar, scroll, hamburger)
+   6. HeroStars (animované hvězdičky)
+   7. ServicesRenderer (karty služeb)
+   8. ReservationForm (rezervační formulář)
+   9. ReviewsService (recenze)
    ============================================================ */
 
 /* ----------------------------------------------------------
@@ -41,41 +43,53 @@ async function initApp() {
         ------------------------------------------------ */
         firebaseService.init();
 
-        /* ------------------------------------------------
-           KROK 2 — EmailJS
-           Inicializuje emailovou službu
-        ------------------------------------------------ */
-        emailService.init();
+         /* ------------------------------------------------
+            KROK 2 — AnalyticsService
+            Inicializuje sledování akcí a návštěv
+         ------------------------------------------------ */
+         analyticsService.init();
 
-        /* ------------------------------------------------
-           KROK 3 — StorageService
-           Propojí Firebase a EmailJS dohromady
-        ------------------------------------------------ */
-        storageService.init();
+         /* ------------------------------------------------
+            KROK 3 — EmailJS
+            Inicializuje emailovou službu
+         ------------------------------------------------ */
+         emailService.init();
 
-        /* ------------------------------------------------
-           KROK 4 — Navigation
-           Navbar, scroll efekty, hamburger menu
-        ------------------------------------------------ */
-        navigation.init();
+         /* ------------------------------------------------
+            KROK 4 — StorageService
+            Propojí Firebase a EmailJS dohromady
+         ------------------------------------------------ */
+         storageService.init();
 
-        /* ------------------------------------------------
-           KROK 5 — HeroStars
-           Animované hvězdičky v hero sekci
-        ------------------------------------------------ */
-        heroStars.init();
+         /* ------------------------------------------------
+            KROK 5 — Navigation
+            Navbar, scroll efekty, hamburger menu
+         ------------------------------------------------ */
+         navigation.init();
 
-        /* ------------------------------------------------
-           KROK 6 — ServicesRenderer
-           Vykreslí karty služeb ze SERVICES_CONFIG
-        ------------------------------------------------ */
-        servicesRenderer.init();
+         /* ------------------------------------------------
+            KROK 6 — HeroStars
+            Animované hvězdičky v hero sekci
+         ------------------------------------------------ */
+         heroStars.init();
 
-        /* ------------------------------------------------
-           KROK 7 — ReservationForm
-           Inicializuje rezervační formulář
-        ------------------------------------------------ */
-        reservationForm.init();
+         /* ------------------------------------------------
+            KROK 7 — ServicesRenderer
+            Vykreslí karty služeb ze SERVICES_CONFIG
+         ------------------------------------------------ */
+         servicesRenderer.init();
+
+         /* ------------------------------------------------
+            KROK 8 — ReservationForm
+            Inicializuje rezervační formulář
+         ------------------------------------------------ */
+         reservationForm.init();
+
+         /* ------------------------------------------------
+            KROK 9 — ReviewsService
+            Načte nejlepší recenze a nastaví formulář recenzí
+         ------------------------------------------------ */
+         reviewsService.init();
 
         console.log("✅ Foot Studio Violet — aplikace úspěšně spuštěna!");
 

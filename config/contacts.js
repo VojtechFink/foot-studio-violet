@@ -50,6 +50,17 @@ const CONTACT_CONFIG = {
     ---------------------------------------------------------- */
     googleMapsEmbedUrl: "https://www.google.com/maps?q=loc:50.252551,12.843525&hl=cs&z=17&t=m&output=embed", // běžná mapa + pin
 
+    /* ----------------------------------------------------------
+       RECENZE
+       Nastavení výběru nejlepších recenzí pro web.
+    ---------------------------------------------------------- */
+    reviews: {
+        maxItems: 6,           // kolik recenzí se zobrazí na webu
+        minRating: 4,          // minimální hodnocení pro výběr
+        minCommentLength: 20,  // minimální délka komentáře
+        maxFetch: 100,         // kolik recenzí se načte před filtrem
+    },
+
 
     /* ----------------------------------------------------------
        OTEVÍRACÍ DOBA

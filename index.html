@@ -63,6 +63,7 @@
             <nav id="navLinks" class="navbar__links" aria-label="Hlavní navigace">
                 <a href="#uvod"      onclick="scrollToSection('uvod');      closeMenu(); return false;">Úvod</a>
                 <a href="#sluzby"    onclick="scrollToSection('sluzby');    closeMenu(); return false;">Služby</a>
+                <a href="#recenze"   onclick="scrollToSection('recenze');   closeMenu(); return false;">Recenze</a>
                 <a href="#rezervace" onclick="scrollToSection('rezervace'); closeMenu(); return false;">Rezervace</a>
                 <a href="#kontakt"   onclick="scrollToSection('kontakt');   closeMenu(); return false;">Kontakt</a>
             </nav>
@@ -105,7 +106,7 @@
             <!-- Obsah hero sekce -->
             <div class="hero__content container">
 
-                <p class="hero__eyebrow">Vítejte ve Foot Studio Violet</p>
+                <p class="hero__eyebrow">Vítejte ve Studiu Violet</p>
 
                 <h1 id="heroTitle" class="hero__title">
                     Nohy jako v bavlnce,<br />
@@ -334,6 +335,30 @@
                     </div>
                 </div>
 
+                <!-- Souhlas se zpracováním osobních údajů -->
+                <div class="reservation__step">
+                    <div class="reservation__step-header">
+                        <span class="reservation__step-number">6</span>
+                        <h3 class="reservation__step-title">Souhlas se zpracováním údajů</h3>
+                    </div>
+
+                    <div class="form__group form__group--consent">
+                        <label for="privacyConsent" class="form__checkbox-label">
+                            <input type="checkbox"
+                                   id="privacyConsent"
+                                   name="privacyConsent"
+                                   class="form__checkbox"
+                                   required
+                                   aria-required="true" />
+                            <span>
+                                Souhlasím se zpracováním osobních údajů za účelem vyřízení rezervace.
+                                Podrobnosti najdete v
+                                <a href="privacy.html" target="_blank" rel="noopener noreferrer">zásadách ochrany osobních údajů</a>.
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Zpráva a odeslání -->
                 <div id="formMessage" class="form-message" role="alert" aria-live="assertive"></div>
 
@@ -389,10 +414,9 @@
                         <span aria-hidden="true">💜</span> Proč my?
                     </h3>
                     <ul class="sidebar__benefits">
-                        <li>✦ Certifikovaní specialisté</li>
+                        <li>✦ Certifikovaný specialista</li>
                         <li>✦ Prémiové materiály</li>
                         <li>✦ Příjemná atmosféra</li>
-                        <li>✦ Potvrzení telefonicky</li>
                     </ul>
                 </div>
 
@@ -402,6 +426,50 @@
 
     </div>
 </section>
+
+        <!-- ========================================================
+             SEKCE: RECENZE
+             ======================================================== -->
+        <section id="recenze" class="reviews" aria-labelledby="reviewsTitle">
+            <div class="container">
+
+                <div class="section-header">
+                    <h2 id="reviewsTitle" class="section-title">Zkušenosti klientek/klientů</h2>
+                </div>
+
+                <div id="reviewsList" class="reviews__grid" aria-live="polite">
+                    <p class="reviews__hint">Načítám recenze...</p>
+                </div>
+
+                <div class="reviews__form-wrap">
+                    <h3 class="reservation__step-title">Přidat recenzi</h3>
+                    <form id="reviewForm" class="reviews__form" novalidate>
+                        <div class="form__group">
+                            <label for="reviewName" class="form__label">Jméno</label>
+                            <input id="reviewName" name="reviewName" class="form__input" type="text" required placeholder="Např. Jana N." />
+                        </div>
+                        <div class="form__group">
+                            <label for="reviewRating" class="form__label">Hodnocení</label>
+                            <select id="reviewRating" name="reviewRating" class="form__input form__select" required>
+                                <option value="">— Vyberte hodnocení —</option>
+                                <option value="5">★★★★★</option>
+                                <option value="4">★★★★☆</option>
+                                <option value="3">★★★☆☆</option>
+                                <option value="2">★★☆☆☆</option>
+                                <option value="1">★☆☆☆☆</option>
+                            </select>
+                        </div>
+                        <div class="form__group">
+                            <label for="reviewComment" class="form__label">Komentář</label>
+                            <textarea id="reviewComment" name="reviewComment" class="form__input" rows="4" required placeholder="Napište svou zkušenost..."></textarea>
+                        </div>
+                        <div id="reviewMessage" class="form-message" role="alert" aria-live="assertive"></div>
+                        <button id="reviewSubmitBtn" class="btn btn--primary" type="submit">Odeslat recenzi</button>
+                    </form>
+                </div>
+
+            </div>
+        </section>
 
         <!-- ========================================================
              SEKCE: KONTAKT
@@ -490,6 +558,10 @@
                     Všechna práva vyhrazena.
                 </p>
 
+                <p class="footer__copy">
+                    <a href="privacy.html">Ochrana osobních údajů</a>
+                </p>
+
 
             </div>
         </div>
@@ -515,12 +587,14 @@
          ============================================================ -->
     <script src="js/configLoader.js"></script>
     <script src="js/firebaseService.js"></script>
+    <script src="js/analyticsService.js"></script>
     <script src="js/emailService.js"></script>
     <script src="js/storageService.js"></script>
     <script src="js/navigation.js"></script>
     <script src="js/heroStars.js"></script>
     <script src="js/servicesRenderer.js"></script>
     <script src="js/reservationForm.js"></script>
+    <script src="js/reviewsService.js"></script>
 
     <!-- ============================================================
          JAVASCRIPT — HLAVNÍ VSTUPNÍ BOD (musí být poslední)

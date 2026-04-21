@@ -12,3 +12,7 @@ dist
 .vscode/
 Thumbs.db
 Desktop.ini
+
+# Admin config (obsahuje hesla)
+admin/dashboard.html
+

@@ -1,0 +1,68 @@
+## 📊 ANALYTIKA - Co se změnilo?
+
+### Nové soubory:
+
+1. **`js/analyticsService.js`** — Nová služba pro sledování
+   - Automaticky zaznamenává návštěvy
+   - Sleduje kliknutí na tlačítka
+   - Zaznamenává výběr služby, data, času
+   - Zaznamenává hotové rezervace
+
+2. **`admin/dashboard.html`** — Admin panel (nový!)
+   - Heslem chráněný přístup (`violet123`)
+   - Statistiky návštěv a rezervací
+   - Grafy s popularitou služeb
+   - Tabulka poslední rezervací
+   - Live aktualizace dat
+
+3. **`admin/README.md`** — Dokumentace
+   - Jak se přihlásit
+   - Jak změnit heslo
+   - Řešení problémů
+   - Bezpečnostní poznámky
+
+### Změnené soubory:
+
+1. **`index.html`**
+   - Přidána reference na `js/analyticsService.js`
+
+2. **`js/main.js`**
+   - Přidána inicializace analyticsService
+   - Pořadí: Firebase → Analytics → EmailJS → Storage → ...
+
+3. **`js/storageService.js`**
+   - Přidáno zaznamenávání hotové rezervace
+   - Volá `analyticsService.trackReservationCompleted()`
+
+4. **`.gitignore`**
+   - Přidán `admin/dashboard.html` (aby se heslo necommitovalo)
+
+### Co se sleduje:
+
+✅ Page views (návštěvy)
+✅ Button clicks (kliknutí)
+✅ Service selections (výběr služby)
+✅ Date selections (výběr dne)
+✅ Time selections (výběr času)
+✅ Form submissions (odeslání formuláře)
+✅ Reservations completed (hotové rezervace)
+✅ Session duration (čas na stránce)
+
+### Přístup k dashboardu:
+
+Lokálně: http://localhost:63342/admin/dashboard.html
+Online: https://studio-violet.cz/admin/dashboard.html
+
+Heslo: violet123 (změň v admin/dashboard.html!)
+
+### Bezpečnost:
+
+- Dashboard je heslem chráněný
+- Emaily jsou anonymizovány (hashovány)
+- Data v Firebase Firestore
+- Session v sessionStorage (zmizí po zavření)
+
+---
+
+Vše je připraveno a funguje automaticky! 🌸
+

@@ -540,6 +540,77 @@ a:hover {
 }
 
 /* ------------------------------------------------------------
+   10a. RECENZE
+   ------------------------------------------------------------ */
+.reviews {
+    background: var(--color-bg);
+}
+
+.reviews__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.review-card {
+    background: var(--gradient-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+}
+
+.review-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.review-card__name {
+    color: var(--color-text);
+    font-size: 0.95rem;
+}
+
+.review-card__source {
+    font-size: 0.75rem;
+    color: var(--color-text-dark);
+}
+
+.review-card__rating {
+    color: #f7c948;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.review-card__comment {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.reviews__hint {
+    color: var(--color-text-muted);
+    text-align: center;
+}
+
+.reviews__hint--error {
+    color: var(--color-error);
+}
+
+.reviews__form-wrap {
+    background: var(--gradient-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+}
+
+.reviews__form {
+    margin-top: 1rem;
+}
+
+/* ------------------------------------------------------------
    10. GALERIE
    ------------------------------------------------------------ */
 .gallery {
@@ -788,6 +859,39 @@ a:hover {
     font-size: 0.78rem;
     color: var(--color-error);
     margin-top: 0.35rem;
+}
+
+.form__group--consent {
+    margin-bottom: 0;
+}
+
+.form__checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.form__checkbox {
+    margin-top: 0.2rem;
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.form__checkbox-label a {
+    color: var(--color-primary-light);
+    text-decoration: underline;
+}
+
+.form__checkbox-label a:hover {
+    color: var(--color-accent);
 }
 
 /* Zpráva formuláře */

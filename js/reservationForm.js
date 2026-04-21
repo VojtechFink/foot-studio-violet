@@ -354,7 +354,24 @@ class ReservationForm {
     _bindInputValidation() {
         const inputs = this.form.querySelectorAll("input");
         inputs.forEach(input => {
+            if (input.id === "privacyConsent") {
+                input.addEventListener("change", () => {
+                    if (input.checked) {
+                        this._clearFieldError(input);
+                    }
+                });
+            }
+
             input.addEventListener("blur", () => {
+                if (input.id === "privacyConsent") {
+                    if (!input.checked) {
+                        this._showFieldError(input, "Bez souhlasu nelze rezervaci odeslat.");
+                    } else {
+                        this._clearFieldError(input);
+                    }
+                    return;
+                }
+
                 if (input.required && !input.value.trim()) {
                     this._showFieldError(input, "Toto pole je povinné.");
                 } else {
@@ -386,6 +403,12 @@ class ReservationForm {
             case "clientPhone":
                 if (!/^[+]?[\d\s\-()]{9,15}$/.test(field.value.trim())) {
                     error = "Zadejte platné telefonní číslo.";
+                }
+                break;
+
+            case "privacyConsent":
+                if (!field.checked) {
+                    error = "Bez souhlasu nelze rezervaci odeslat.";
                 }
                 break;
         }
@@ -430,6 +453,14 @@ class ReservationForm {
                 return;
             }
 
+            const consentCheckbox = document.getElementById("privacyConsent");
+            if (!consentCheckbox?.checked) {
+                this._showFieldError(consentCheckbox, "Bez souhlasu nelze rezervaci odeslat.");
+                this._showMessage("Potvrďte prosím souhlas se zpracováním osobních údajů.", "error");
+                return;
+            }
+            this._clearFieldError(consentCheckbox);
+
             const formData = {
             clientName:  document.getElementById("clientName")?.value.trim()  || "",
             clientEmail: document.getElementById("clientEmail")?.value.trim() || "",   // ← PŘIDAT
@@ -438,6 +469,8 @@ class ReservationForm {
             date:        this.selectedDate,
             time:        this.selectedTime,
             clientNote:  document.getElementById("clientNote")?.value.trim()  || "",
+            privacyConsent: consentCheckbox.checked,
+            privacyConsentAt: new Date().toISOString(),
             };
 
             await this._submitReservation(formData);
