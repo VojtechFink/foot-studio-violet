@@ -106,14 +106,17 @@ service cloud.firestore {
     //
     //  Veřejnost: create — MUSÍ mít approved=false, status="pending"
     //                       (klient si recenzi sám neschválí)
-    //             read   — pouze approved=true && visible!=false
+    //             read   — pouze approved=true (visible filtruje client-side)
     //  Admin:     plný přístup
     // ----------------------------------------------------------
     match /reviews/{docId} {
 
+      // Veřejnost vidí pouze schválené recenze.
+      // Pole `visible` je UI filtr — řeší se client-side v reviewsService.js,
+      // nikoli v rules. Firestore neumí garantovat `visible != false` pro list
+      // query bez odpovídajícího where() filtru → způsobuje permission-denied.
       allow read: if isAuthenticated()
-                  || (resource.data.approved == true
-                      && resource.data.visible != false);
+                  || resource.data.approved == true;
 
       allow update, delete: if isAuthenticated();
 
