@@ -51,6 +51,16 @@ class EmailService {
        Návratová hodnota:
          Object — parametry pro EmailJS šablonu
     ---------------------------------------------------------- */
+    // Escapuje HTML znaky v uživatelském vstupu — zabrání HTML injection v emailu
+    _escapeHtml(value) {
+        return String(value || "")
+            .replace(/&/g,  "&amp;")
+            .replace(/</g,  "&lt;")
+            .replace(/>/g,  "&gt;")
+            .replace(/"/g,  "&quot;")
+            .replace(/'/g,  "&#39;");
+    }
+
     _buildEmailParams(reservation) {
         const service = SERVICES_CONFIG.find(s => s.id === Number(reservation.serviceId));
         const serviceName = service ? service.name : String(reservation.serviceId || "");
@@ -77,31 +87,31 @@ class EmailService {
     <table style="width:100%;border-collapse:collapse;font-size:14px;">
       <tr>
         <td style="padding:9px 12px;background:#f7f5ff;border-radius:6px;font-weight:600;color:#764ba2;width:38%;">👤 Jméno</td>
-        <td style="padding:9px 12px;color:#333333;">${reservation.clientName}</td>
+        <td style="padding:9px 12px;color:#333333;">${this._escapeHtml(reservation.clientName)}</td>
       </tr>
       <tr>
         <td style="padding:9px 12px;font-weight:600;color:#764ba2;">📧 Email</td>
-        <td style="padding:9px 12px;color:#333333;">${reservation.clientEmail}</td>
+        <td style="padding:9px 12px;color:#333333;">${this._escapeHtml(reservation.clientEmail)}</td>
       </tr>
       <tr>
         <td style="padding:9px 12px;background:#f7f5ff;border-radius:6px;font-weight:600;color:#764ba2;">📞 Telefon</td>
-        <td style="padding:9px 12px;background:#f7f5ff;color:#333333;">${reservation.clientPhone}</td>
+        <td style="padding:9px 12px;background:#f7f5ff;color:#333333;">${this._escapeHtml(reservation.clientPhone)}</td>
       </tr>
       <tr>
         <td style="padding:9px 12px;font-weight:600;color:#764ba2;">💅 Služba</td>
-        <td style="padding:9px 12px;color:#333333;">${serviceName}</td>
+        <td style="padding:9px 12px;color:#333333;">${this._escapeHtml(serviceName)}</td>
       </tr>
       <tr>
         <td style="padding:9px 12px;background:#f7f5ff;border-radius:6px;font-weight:600;color:#764ba2;">📅 Datum</td>
-        <td style="padding:9px 12px;background:#f7f5ff;color:#333333;">${formattedDate}</td>
+        <td style="padding:9px 12px;background:#f7f5ff;color:#333333;">${this._escapeHtml(formattedDate)}</td>
       </tr>
       <tr>
         <td style="padding:9px 12px;font-weight:600;color:#764ba2;">🕐 Čas</td>
-        <td style="padding:9px 12px;color:#333333;">${reservation.time}</td>
+        <td style="padding:9px 12px;color:#333333;">${this._escapeHtml(reservation.time)}</td>
       </tr>
       <tr>
         <td style="padding:9px 12px;background:#f7f5ff;border-radius:6px;font-weight:600;color:#764ba2;">📝 Poznámka</td>
-        <td style="padding:9px 12px;background:#f7f5ff;color:#333333;">${reservationNote}</td>
+        <td style="padding:9px 12px;background:#f7f5ff;color:#333333;">${this._escapeHtml(reservationNote)}</td>
       </tr>
     </table>
     <p style="margin:24px 0 0;font-size:13px;color:#999999;text-align:center;">
