@@ -15,7 +15,8 @@ class AnalyticsService {
         this.initialized = false;
         this.sessionId = this._generateSessionId();
         this.sessionStartTime = new Date();
-        this.pageViewTracked = false;
+        // Přečti z sessionStorage — refresh nepočítáme jako novou návštěvu
+        this.pageViewTracked = sessionStorage.getItem('analyticsPageViewTracked') === '1';
     }
 
     /* ----------------------------------------------------------
@@ -45,7 +46,13 @@ class AnalyticsService {
        PRIVÁTNÍ FUNKCE — Generování Session ID
     ---------------------------------------------------------- */
     _generateSessionId() {
-        return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        // Použij existující ID ze sessionStorage — přežije refresh, smaže se po zavření tabu
+        let sessionId = sessionStorage.getItem('analyticsSessionId');
+        if (!sessionId) {
+            sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            sessionStorage.setItem('analyticsSessionId', sessionId);
+        }
+        return sessionId;
     }
 
     /* ----------------------------------------------------------
@@ -107,6 +114,7 @@ class AnalyticsService {
 
             await firebaseService.db.collection('analytics').add(pageViewData);
             this.pageViewTracked = true;
+            sessionStorage.setItem('analyticsPageViewTracked', '1');
         } catch (error) {
             console.warn("⚠️ AnalyticsService: chyba při zaznamenání page view →", error);
         }

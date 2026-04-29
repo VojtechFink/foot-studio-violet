@@ -14,6 +14,10 @@ class ReviewsService {
         this.form = document.getElementById("reviewForm");
         this.messageEl = document.getElementById("reviewMessage");
         this.submitBtn = document.getElementById("reviewSubmitBtn");
+        this.summaryEl = document.getElementById("reviewsSummary");
+        this.averageValueEl = document.getElementById("reviewsAverageValue");
+        this.averageStarsEl = document.getElementById("reviewsAverageStars");
+        this.averageTextEl = document.getElementById("reviewsAverageText");
     }
 
     init() {
@@ -45,36 +49,80 @@ class ReviewsService {
         const cfg = this._getConfig();
 
         try {
+            // Firestore filtruje přímo schválené recenze — nečteme pending záznamy
             const snapshot = await firebaseService.db
                 .collection("reviews")
+                .where("approved", "==", true)
                 .orderBy("createdAt", "desc")
                 .limit(cfg.maxFetch)
                 .get();
 
-            const reviews = snapshot.docs
+            const approvedVisibleReviews = snapshot.docs
                 .map(doc => ({ id: doc.id, ...doc.data() }))
-                .filter(r => r.visible !== false)
-                .filter(r => r.approved !== false)
+                .filter(r => r.visible !== false);
+
+            this._renderReviewsSummary(approvedVisibleReviews);
+
+            const reviews = approvedVisibleReviews
                 .filter(r => Number(r.rating) >= cfg.minRating)
-                .filter(r => String(r.comment || "").trim().length >= cfg.minCommentLength)
-                .sort((a, b) => {
-                    const ratingDiff = Number(b.rating || 0) - Number(a.rating || 0);
-                    if (ratingDiff !== 0) return ratingDiff;
+                .filter(r => String(r.comment || "").trim().length >= cfg.minCommentLength);
 
-                    const commentDiff = String(b.comment || "").trim().length - String(a.comment || "").trim().length;
-                    if (commentDiff !== 0) return commentDiff;
-
-                    const aTime = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
-                    const bTime = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
-                    return bTime - aTime;
-                })
-                .slice(0, cfg.maxItems);
-
-            this._renderReviews(reviews);
+            this._renderReviews(this._selectDisplayReviews(reviews, cfg.maxItems));
         } catch (error) {
             console.error("❌ ReviewsService: chyba při načítání recenzí →", error);
+            this._renderReviewsSummary([]);
             this._renderError(this._mapFirebaseErrorToMessage(error, "load"));
         }
+    }
+
+    _renderReviewsSummary(reviews) {
+        if (!this.summaryEl || !this.averageValueEl || !this.averageStarsEl || !this.averageTextEl) {
+            return;
+        }
+
+        if (!reviews.length) {
+            this.summaryEl.hidden = true;
+            return;
+        }
+
+        const totalRating = reviews.reduce((sum, review) => sum + (Number(review.rating) || 0), 0);
+        const averageRating = totalRating / reviews.length;
+        const roundedStars = Math.round(averageRating);
+        const stars = "★".repeat(roundedStars) + "☆".repeat(5 - roundedStars);
+
+        this.averageValueEl.textContent = `${averageRating.toFixed(1)} / 5`;
+        this.averageStarsEl.textContent = stars;
+        this.averageStarsEl.setAttribute("aria-label", `Průměrné hodnocení ${averageRating.toFixed(1)} z 5`);
+        this.averageTextEl.textContent = `${reviews.length} ${reviews.length === 1 ? "recenze" : (reviews.length >= 2 && reviews.length <= 4 ? "recenze" : "recenzí")}`;
+        this.summaryEl.hidden = false;
+    }
+
+    _sortReviewsByQuality(reviews) {
+        return [...reviews].sort((a, b) => {
+            const ratingDiff = Number(b.rating || 0) - Number(a.rating || 0);
+            if (ratingDiff !== 0) return ratingDiff;
+
+            const commentDiff = String(b.comment || "").trim().length - String(a.comment || "").trim().length;
+            if (commentDiff !== 0) return commentDiff;
+
+            const aTime = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : (a.createdAt instanceof Date ? a.createdAt.getTime() : 0);
+            const bTime = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : (b.createdAt instanceof Date ? b.createdAt.getTime() : 0);
+            return bTime - aTime;
+        });
+    }
+
+    _selectDisplayReviews(reviews, maxItems) {
+        const sorted = this._sortReviewsByQuality(reviews);
+        const selected = sorted.slice(0, maxItems);
+
+        const hasVisibleFourStar = selected.some(review => Number(review.rating) === 4);
+        const bestFourStar = sorted.find(review => Number(review.rating) === 4);
+
+        if (!hasVisibleFourStar && bestFourStar && selected.length > 1) {
+            selected[selected.length - 1] = bestFourStar;
+        }
+
+        return Array.from(new Map(selected.map(review => [review.id, review])).values());
     }
 
     _renderReviews(reviews) {
@@ -82,19 +130,18 @@ class ReviewsService {
 
         if (!reviews.length) {
             this.listEl.innerHTML = "<p class=\"reviews__hint\">Zatím nejsou dostupné žádné recenze.</p>";
+            this._applyInlineReviewsLayout();
             return;
         }
 
         const cards = reviews.map((review) => {
             const rating = Math.max(1, Math.min(5, Number(review.rating) || 0));
             const stars = "★".repeat(rating) + "☆".repeat(5 - rating);
-            const source = review.source === "google" ? "Google" : "Ověřená recenze";
 
             return `
                 <article class="review-card" aria-label="Recenze od ${this._escapeHtml(review.clientName || "Anonym")}">
                     <div class="review-card__header">
                         <strong class="review-card__name">${this._escapeHtml(review.clientName || "Anonym")}</strong>
-                        <span class="review-card__source">${source}</span>
                     </div>
                     <div class="review-card__rating" aria-label="Hodnocení ${rating} z 5">${stars}</div>
                     <p class="review-card__comment">${this._escapeHtml(review.comment || "")}</p>
@@ -103,11 +150,33 @@ class ReviewsService {
         }).join("");
 
         this.listEl.innerHTML = cards;
+        this._applyInlineReviewsLayout();
     }
 
     _renderError(message) {
         if (!this.listEl) return;
         this.listEl.innerHTML = `<p class=\"reviews__hint reviews__hint--error\">${this._escapeHtml(message)}</p>`;
+        this._applyInlineReviewsLayout();
+    }
+
+    _applyInlineReviewsLayout() {
+        if (!this.listEl) return;
+
+        this.listEl.style.display = "grid";
+        this.listEl.style.gridTemplateColumns = "repeat(auto-fit, minmax(260px, 1fr))";
+        this.listEl.style.gap = "1.25rem";
+        this.listEl.style.marginBottom = "2.5rem";
+
+        this.listEl.querySelectorAll(".review-card").forEach((card) => {
+            card.style.display = "flex";
+            card.style.flexDirection = "column";
+            card.style.width = "100%";
+            card.style.background = "#1f1830";
+            card.style.border = "1px solid rgba(155, 89, 182, 0.55)";
+            card.style.borderRadius = "16px";
+            card.style.padding = "1.1rem 1.2rem";
+            card.style.boxShadow = "0 10px 24px rgba(0, 0, 0, 0.28)";
+        });
     }
 
     _bindForm() {
@@ -115,6 +184,12 @@ class ReviewsService {
 
         this.form.addEventListener("submit", async (e) => {
             e.preventDefault();
+
+            // Honeypot check — robot vyplní skryté pole, člověk ne
+            const honeypot = this.form.querySelector('input[name="_hp_website"]');
+            if (honeypot && honeypot.value) {
+                return; // Tichá ignorace — robot si nemá všimnout
+            }
 
             const name = document.getElementById("reviewName")?.value.trim() || "";
             const rating = Number(document.getElementById("reviewRating")?.value || 0);
@@ -151,7 +226,8 @@ class ReviewsService {
                 rating: data.rating,
                 comment: data.comment,
                 source: "user",
-                approved: true,
+                approved: false,
+                status: "pending",
                 visible: true,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             });
@@ -162,7 +238,7 @@ class ReviewsService {
             });
 
             this.form.reset();
-            this._showMessage("Děkujeme za recenzi!", "success");
+            this._showMessage("Děkujeme za recenzi! Po kontrole ji zveřejníme.", "success");
             await this.loadTopReviews();
         } catch (error) {
             console.error("❌ ReviewsService: chyba při ukládání recenze →", error);
@@ -213,7 +289,7 @@ class ReviewsService {
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
-            .replace(/\"/g, "&quot;")
+            .replace(/"/g, "&quot;")
             .replace(/'/g, "&#39;");
     }
 }

@@ -16,3 +16,6 @@ Desktop.ini
 # Admin config (obsahuje hesla)
 admin/dashboard.html
 
+# Konfigurace s reálnými API klíči — NIKDY necommitovat!
+config/contacts.js
+

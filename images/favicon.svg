@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Tmavé pozadí -->
+  <rect width="32" height="32" rx="6" fill="#0a0a0f"/>
+
+  <!-- Okvětní lístky (5x, rozmístěné dokola) -->
+  <ellipse cx="16" cy="9"  rx="3" ry="5.5" fill="#9b59b6" opacity="0.9" transform="rotate(0   16 16)"/>
+  <ellipse cx="16" cy="9"  rx="3" ry="5.5" fill="#9b59b6" opacity="0.9" transform="rotate(72  16 16)"/>
+  <ellipse cx="16" cy="9"  rx="3" ry="5.5" fill="#c39bd3" opacity="0.85" transform="rotate(144 16 16)"/>
+  <ellipse cx="16" cy="9"  rx="3" ry="5.5" fill="#c39bd3" opacity="0.85" transform="rotate(216 16 16)"/>
+  <ellipse cx="16" cy="9"  rx="3" ry="5.5" fill="#9b59b6" opacity="0.9" transform="rotate(288 16 16)"/>
+
+  <!-- Střed květu -->
+  <circle cx="16" cy="16" r="4" fill="#e91e8c"/>
+  <circle cx="16" cy="16" r="2" fill="#f8c8e0"/>
+</svg>

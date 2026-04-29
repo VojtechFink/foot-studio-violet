@@ -115,6 +115,22 @@
             font-size: 14px;
         }
 
+        .dashboard-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-secondary {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -330,7 +346,8 @@
 <!-- LOGIN SEKCE -->
 <div class="login-container show" id="loginContainer">
     <h1>🔐 Admin Dashboard</h1>
-    <input type="password" id="passwordInput" placeholder="Zadej heslo..." autocomplete="off">
+    <input type="email" id="emailInput" placeholder="E-mail..." autocomplete="email">
+    <input type="password" id="passwordInput" placeholder="Heslo..." autocomplete="current-password">
     <button onclick="login()">Přihlásit se</button>
     <div class="error" id="loginError"></div>
 </div>
@@ -339,7 +356,10 @@
 <div class="dashboard" id="dashboard">
     <div class="dashboard-header">
         <h1>📊 Admin Dashboard — Studio Violet</h1>
-        <button onclick="logout()">Odhlásit se</button>
+        <div class="dashboard-actions">
+            <button class="btn-secondary" onclick="exportReservationsCsv()">Export CSV</button>
+            <button onclick="logout()">Odhlásit se</button>
+        </div>
     </div>
 
     <!-- STATISTIKY -->
@@ -404,11 +424,31 @@
                     <th>Čas</th>
                     <th>Cena</th>
                     <th>Stav</th>
+                    <th>Akce</th>
                 </tr>
             </thead>
             <tbody id="reservationsTableBody">
                 <tr>
-                    <td colspan="7" class="loading">Načítám data...</td>
+                    <td colspan="8" class="loading">Načítám data...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-card" style="margin-top: 20px;">
+        <h3>📝 Recenze ke schválení</h3>
+        <table id="reviewsTable">
+            <thead>
+                <tr>
+                    <th>Jméno</th>
+                    <th>Hodnocení</th>
+                    <th>Komentář</th>
+                    <th>Akce</th>
+                </tr>
+            </thead>
+            <tbody id="reviewsTableBody">
+                <tr>
+                    <td colspan="4" class="loading">Načítám data...</td>
                 </tr>
             </tbody>
         </table>
@@ -418,34 +458,35 @@
 
 <!-- FIREBASE SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="../config/contacts.js"></script>
+<script src="../config/services.js"></script>
 
 <script>
     let db = null;
-    const ADMIN_PASSWORD = 'violet123'; // TODO: Změň na lepší heslo!
-    const SESSION_KEY = 'adminDashboardSession';
+    let latestReservations = [];
 
     /* ----------------------------------------------------------
        INICIALIZACE FIREBASE
+       Používá CONTACT_CONFIG přímo — žádný eval(), žádný fetch().
     ---------------------------------------------------------- */
-    async function initFirebase() {
+    function initFirebase() {
         try {
-            // Načti konfiguraci z parent okna nebo hlavní stránky
-            const response = await fetch('../config/contacts.js');
-            const configText = await response.text();
-
-            // Najdi Firebase config v textu
-            const configMatch = configText.match(/firebase:\s*(\{[\s\S]*?\})/);
-            if (!configMatch) {
-                throw new Error('Firebase config nenalezen');
-            }
-
-            const firebaseConfig = eval('(' + configMatch[1] + ')');
-            firebase.initializeApp(firebaseConfig);
+            firebase.initializeApp(CONTACT_CONFIG.firebase);
             db = firebase.firestore();
 
-            // Zkontroluj session
-            checkSession();
+            // Sleduj stav přihlášení — Firebase Auth je server-side ověření
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    document.getElementById('loginContainer').classList.remove('show');
+                    document.getElementById('dashboard').classList.add('show');
+                    loadDashboardData();
+                } else {
+                    document.getElementById('loginContainer').classList.add('show');
+                    document.getElementById('dashboard').classList.remove('show');
+                }
+            });
         } catch (error) {
             console.error('❌ Chyba při inicializaci Firebase:', error);
             showError('Nelze se připojit k databázi. Zkontroluj Firebase konfiguraci.');
@@ -453,44 +494,52 @@
     }
 
     /* ----------------------------------------------------------
-       LOGIN
+       LOGIN — Firebase Email/Password Auth
+       Ověření probíhá na serveru Firebase, nelze obejít v DevTools.
+       Před prvním použitím vytvoř účet v Firebase Console:
+         Authentication → Users → Add user
     ---------------------------------------------------------- */
-    function login() {
+    async function login() {
+        const email    = document.getElementById('emailInput').value.trim();
         const password = document.getElementById('passwordInput').value;
         const errorDiv = document.getElementById('loginError');
+        const btn      = document.querySelector('.login-container button');
 
-        if (password === ADMIN_PASSWORD) {
-            sessionStorage.setItem(SESSION_KEY, 'authenticated');
-            document.getElementById('loginContainer').classList.remove('show');
-            document.getElementById('dashboard').classList.add('show');
-            loadDashboardData();
-            errorDiv.textContent = '';
-        } else {
-            errorDiv.textContent = '❌ Nesprávné heslo';
+        if (!email || !password) {
+            errorDiv.textContent = '❌ Zadejte e-mail i heslo.';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Přihlašuji…';
+        errorDiv.textContent = '';
+
+        try {
+            await firebase.auth().signInWithEmailAndPassword(email, password);
+            // onAuthStateChanged výše zobrazí dashboard automaticky
+        } catch (error) {
+            const messages = {
+                'auth/user-not-found':   '❌ Účet neexistuje.',
+                'auth/wrong-password':   '❌ Nesprávné heslo.',
+                'auth/invalid-email':    '❌ Neplatný e-mail.',
+                'auth/too-many-requests':'❌ Příliš mnoho pokusů. Zkus to za chvíli.',
+            };
+            errorDiv.textContent = messages[error.code] || '❌ Přihlášení selhalo.';
             document.getElementById('passwordInput').value = '';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Přihlásit se';
         }
     }
 
     /* ----------------------------------------------------------
        LOGOUT
     ---------------------------------------------------------- */
-    function logout() {
-        sessionStorage.removeItem(SESSION_KEY);
-        document.getElementById('loginContainer').classList.add('show');
-        document.getElementById('dashboard').classList.remove('show');
+    async function logout() {
+        await firebase.auth().signOut();
+        document.getElementById('emailInput').value    = '';
         document.getElementById('passwordInput').value = '';
         document.getElementById('loginError').textContent = '';
-    }
-
-    /* ----------------------------------------------------------
-       KONTROLA SESSION
-    ---------------------------------------------------------- */
-    function checkSession() {
-        if (sessionStorage.getItem(SESSION_KEY) === 'authenticated') {
-            document.getElementById('loginContainer').classList.remove('show');
-            document.getElementById('dashboard').classList.add('show');
-            loadDashboardData();
-        }
     }
 
     /* ----------------------------------------------------------
@@ -499,13 +548,14 @@
     async function loadDashboardData() {
         try {
             // Paralelní načtení všech dat
-            const [visits, reservations, analytics, serviceSelections, timeSelections, formSubmissions] = await Promise.all([
+            const [visits, reservations, analytics, serviceSelections, timeSelections, formSubmissions, pendingReviews] = await Promise.all([
                 getPageViews(),
                 getReservations(),
                 getAnalytics(),
                 getServiceSelections(),
                 getTimeSelections(),
-                getFormSubmissions()
+                getFormSubmissions(),
+                getPendingReviews()
             ]);
 
             const funnel = {
@@ -518,9 +568,42 @@
             updateStats(visits, reservations, analytics, funnel);
             updateCharts(reservations, analytics, visits, funnel);
             updateReservationsTable(reservations);
+            updatePendingReviewsTable(pendingReviews);
         } catch (error) {
             console.error('Chyba při načítání dat:', error);
             showError('Chyba při načítání dat: ' + error.message);
+        }
+    }
+
+    async function getPendingReviews() {
+        const mapReviewDoc = (doc) => ({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate() : new Date(0)
+        });
+
+        try {
+            const snapshot = await db.collection('reviews')
+                .where('approved', '==', false)
+                .orderBy('createdAt', 'desc')
+                .limit(30)
+                .get();
+
+            return snapshot.docs.map(mapReviewDoc);
+        } catch (error) {
+            if (!isFirestoreIndexError(error)) {
+                throw error;
+            }
+
+            console.warn('⚠️ Firestore index chybí pro pending reviews, používám fallback bez orderBy.');
+            const fallbackSnapshot = await db.collection('reviews')
+                .where('approved', '==', false)
+                .get();
+
+            return fallbackSnapshot.docs
+                .map(mapReviewDoc)
+                .sort((a, b) => b.createdAt - a.createdAt)
+                .slice(0, 30);
         }
     }
 
@@ -574,9 +657,10 @@
        ZÍSKÁNÍ REZERVACÍ
     ---------------------------------------------------------- */
     async function getReservations() {
-        const mapReservationDoc = (doc) => ({
+        const mapReservationDoc = (doc, collectionName) => ({
             ...doc.data(),
             id: doc.id,
+            __collection: collectionName,
             date: typeof doc.data().date === 'string' ? doc.data().date : doc.data().date?.toDate?.()
         });
 
@@ -593,8 +677,8 @@
         ]);
 
         const merged = [
-            ...primarySnapshot.docs.map(mapReservationDoc),
-            ...(legacySnapshot ? legacySnapshot.docs.map(mapReservationDoc) : [])
+            ...primarySnapshot.docs.map(doc => mapReservationDoc(doc, 'reservations')),
+            ...(legacySnapshot ? legacySnapshot.docs.map(doc => mapReservationDoc(doc, 'Rezervace')) : [])
         ];
 
         const uniqueById = Array.from(new Map(merged.map(item => [item.id, item])).values());
@@ -602,6 +686,18 @@
         return uniqueById
             .sort((a, b) => normalizeDateValue(b.date).localeCompare(normalizeDateValue(a.date)))
             .slice(0, 50);
+    }
+
+    function getServiceMeta(reservation) {
+        const serviceId = Number(reservation?.serviceId || 0);
+        const service = Array.isArray(SERVICES_CONFIG)
+            ? SERVICES_CONFIG.find(s => Number(s.id) === serviceId)
+            : null;
+
+        return {
+            serviceName: reservation?.serviceName || service?.name || '-',
+            price: Number(reservation?.price ?? service?.price ?? 0),
+        };
     }
 
     /* ----------------------------------------------------------
@@ -646,11 +742,17 @@
         document.getElementById('totalReservations').textContent = totalRes;
         document.getElementById('reservationsToday').textContent = `Dnes: ${resToday}`;
 
-        // Tržba
-        const totalRevenue = analytics.reduce((sum, a) => sum + (a.data.price || 0), 0);
-        const revenueToday = analytics
-            .filter(a => a.timestamp >= today)
-            .reduce((sum, a) => sum + (a.data.price || 0), 0);
+        // Tržba (počítaná z aktivních rezervací, zrušené se nepočítají)
+        const billableReservations = reservations.filter(r => String(r.status || 'pending').toLowerCase() !== 'cancelled');
+        const totalRevenue = billableReservations.reduce((sum, r) => sum + getServiceMeta(r).price, 0);
+        const revenueToday = billableReservations
+            .filter(r => {
+                const rDate = typeof r.date === 'string' ? new Date(r.date) : r.date;
+                if (!rDate) return false;
+                rDate.setHours(0, 0, 0, 0);
+                return rDate >= today;
+            })
+            .reduce((sum, r) => sum + getServiceMeta(r).price, 0);
         document.getElementById('totalRevenue').textContent = `${totalRevenue.toFixed(0)} Kč`;
         document.getElementById('revenueToday').textContent = `Dnes: ${revenueToday.toFixed(0)} Kč`;
 
@@ -805,23 +907,250 @@
     ---------------------------------------------------------- */
     function updateReservationsTable(reservations) {
         const tbody = document.getElementById('reservationsTableBody');
+        latestReservations = reservations;
 
         if (reservations.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #999;">Žádné rezervace</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #999;">Žádné rezervace</td></tr>';
             return;
         }
 
-        tbody.innerHTML = reservations.slice(0, 10).map(r => `
+        tbody.innerHTML = reservations.slice(0, 10).map(r => {
+            const meta = getServiceMeta(r);
+            return `
             <tr>
-                <td>${r.clientName || '-'}</td>
-                <td>${r.clientEmail || '-'}</td>
-                <td>${r.serviceName || '-'}</td>
-                <td>${r.date || '-'}</td>
-                <td>${r.time || '-'}</td>
-                <td>${(r.price || 0).toFixed(0)} Kč</td>
-                <td><span class="badge badge-success">✓ Potvrzena</span></td>
+                <td>${escapeHtml(r.clientName || '-')}</td>
+                <td>${escapeHtml(r.clientEmail || '-')}</td>
+                <td>${escapeHtml(meta.serviceName)}</td>
+                <td>${escapeHtml(r.date || '-')}</td>
+                <td>${escapeHtml(r.time || '-')}</td>
+                <td>${formatPrice(meta.price)}</td>
+                <td>${getStatusBadgeHtml(r.status)}</td>
+                <td>
+                    <button class="btn-secondary" style="padding: 6px 10px;" onclick="updateReservationStatus('${r.id}', '${r.__collection || 'reservations'}', 'confirmed')">Potvrdit</button>
+                    <button style="background:#e67e22;color:#fff;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;" onclick="updateReservationStatus('${r.id}', '${r.__collection || 'reservations'}', 'pending')">Čeká</button>
+                    <button style="background:#c0392b;color:#fff;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;" onclick="updateReservationStatus('${r.id}', '${r.__collection || 'reservations'}', 'cancelled')">Zrušit</button>
+                </td>
             </tr>
-        `).join('');
+        `;
+        }).join('');
+    }
+
+    function updatePendingReviewsTable(reviews) {
+        const tbody = document.getElementById('reviewsTableBody');
+        if (!tbody) return;
+
+        if (!reviews.length) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999;">Žádné recenze ke schválení</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = reviews.map(r => {
+            const rating = Math.max(1, Math.min(5, Number(r.rating) || 0));
+            return `
+                <tr>
+                    <td>${escapeHtml(r.clientName || 'Anonym')}</td>
+                    <td>${'★'.repeat(rating)}${'☆'.repeat(5 - rating)}</td>
+                    <td>${escapeHtml(r.comment || '')}</td>
+                    <td>
+                        <button class="btn-secondary" style="padding:6px 10px;" onclick="approveReview('${r.id}', true)">Schválit</button>
+                        <button style="background:#c0392b;color:#fff;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;" onclick="approveReview('${r.id}', false)">Zamítnout</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    async function updateReservationStatus(id, collectionName, status) {
+        try {
+            const reservation = latestReservations.find(r => r.id === id) || null;
+
+            await db.collection(collectionName || 'reservations').doc(id).update({
+                status,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            if (String(status).toLowerCase() === 'cancelled' && reservation) {
+                const syncResult = await syncReservationCancellationToCalendar({
+                    ...reservation,
+                    status: 'cancelled',
+                });
+
+                if (syncResult.attempted && syncResult.success === false) {
+                    showError('Rezervace byla zrušena, ale zrušení v kalendáři selhalo. Zkontroluj webhook.');
+                }
+            }
+
+            await loadDashboardData();
+        } catch (error) {
+            console.error('❌ Chyba při změně stavu rezervace:', error);
+            showError('Nepodařilo se změnit stav rezervace.');
+        }
+    }
+
+    async function syncReservationCancellationToCalendar(reservationData) {
+        const cfg = CONTACT_CONFIG?.calendarWebhook;
+
+        if (!cfg || !cfg.enabled || !cfg.url) {
+            return { attempted: false, reason: 'disabled' };
+        }
+
+        const meta = getServiceMeta(reservationData);
+
+        // Délka služby pro Apps Script (potřebuje vědět jak dlouhou událost hledat/smazat)
+        const serviceObj = Array.isArray(SERVICES_CONFIG)
+            ? SERVICES_CONFIG.find(s => Number(s.id) === Number(reservationData.serviceId || 0))
+            : null;
+        const durationMinutes = Number(serviceObj?.duration || reservationData.durationMinutes || 60);
+        const dateStr = typeof reservationData.date === 'string'
+            ? reservationData.date
+            : (reservationData.date instanceof Date ? reservationData.date.toISOString().slice(0, 10) : '');
+        const timeStr = reservationData.time || '';
+        const startIso = dateStr && timeStr ? `${dateStr}T${timeStr}:00` : '';
+
+        const payload = {
+            version: '1.0',
+            action: 'reservation.cancelled',
+            reservationId: reservationData.id,
+            salonName: CONTACT_CONFIG?.salonName || 'Studio',
+            timezone: cfg.timezone || 'Europe/Prague',
+            reservation: {
+                id: reservationData.id,
+                clientName: reservationData.clientName || '',
+                clientEmail: reservationData.clientEmail || '',
+                clientPhone: reservationData.clientPhone || '',
+                serviceId: Number(reservationData.serviceId || 0),
+                serviceName: meta.serviceName,
+                durationMinutes,
+                date: dateStr,
+                time: timeStr,
+                startIso,
+                status: 'cancelled',
+                note: String(reservationData.clientNote || ''),
+            },
+        };
+
+        const timeoutMs = Number(cfg.timeoutMs) || 8000;
+        const corsMode = cfg.corsMode || 'no-cors';
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+            const response = await fetch(cfg.url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload),
+                signal: controller.signal,
+                mode: corsMode,
+            });
+
+            clearTimeout(timeout);
+
+            if (response.type === 'opaque') {
+                console.warn('⚠️ Admin: zrušení kalendáře odesláno (no-cors), výsledek nelze ověřit');
+                return { attempted: true, success: null, opaque: true };
+            }
+
+            if (!response.ok) {
+                throw new Error(`Webhook returned HTTP ${response.status}`);
+            }
+
+            return { attempted: true, success: true };
+        } catch (error) {
+            clearTimeout(timeout);
+            console.warn('⚠️ Admin: zrušení kalendáře selhalo →', error);
+            return { attempted: true, success: false, error: String(error) };
+        }
+    }
+
+    async function approveReview(id, approved) {
+        try {
+            await db.collection('reviews').doc(id).update({
+                approved,
+                status: approved ? 'approved' : 'rejected',
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            await loadDashboardData();
+        } catch (error) {
+            console.error('❌ Chyba při schvalování recenze:', error);
+            showError('Nepodařilo se upravit recenzi.');
+        }
+    }
+
+    function getStatusBadgeHtml(status) {
+        const value = String(status || 'pending').toLowerCase();
+        if (value === 'confirmed') return '<span class="badge badge-success">✓ Potvrzena</span>';
+        if (value === 'cancelled') return '<span class="badge" style="background:#f8d7da;color:#721c24;">✕ Zrušena</span>';
+        return '<span class="badge badge-info">⏳ Čeká</span>';
+    }
+
+    function formatPrice(price) {
+        const value = Number(price || 0);
+        return `${value.toFixed(0)} Kč`;
+    }
+
+    function escapeHtml(value) {
+        return String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function exportReservationsCsv() {
+        if (!latestReservations.length) {
+            showError('Nejsou dostupná data k exportu.');
+            return;
+        }
+
+        const rows = [
+            ['Jmeno', 'Email', 'Sluzba', 'Datum', 'Cas', 'Cena', 'Stav']
+        ];
+
+        let revenueAll = 0;
+        let revenueConfirmed = 0;
+
+        latestReservations.forEach(r => {
+            const meta = getServiceMeta(r);
+            const price = Number(meta.price || 0);
+            const status = String(r.status || 'pending').toLowerCase();
+            revenueAll += price;
+            if (status === 'confirmed') revenueConfirmed += price;
+
+            rows.push([
+                r.clientName || '',
+                r.clientEmail || '',
+                meta.serviceName || '',
+                r.date || '',
+                r.time || '',
+                price.toFixed(0),
+                status
+            ]);
+        });
+
+        rows.push([]);
+        rows.push(['Souhrn', '', '', '', '', '', '']);
+        rows.push(['Trzba celkem (Kc)', revenueAll.toFixed(0)]);
+        rows.push(['Trzba potvrzene (Kc)', revenueConfirmed.toFixed(0)]);
+
+        const csv = rows.map(row => row.map(csvEscape).join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = `rezervace-export-${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    function csvEscape(value) {
+        const text = String(value ?? '');
+        if (text.includes(',') || text.includes('"') || text.includes('\n')) {
+            return `"${text.replace(/"/g, '""')}"`;
+        }
+        return text;
     }
 
     /* ----------------------------------------------------------

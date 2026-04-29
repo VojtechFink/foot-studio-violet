@@ -6,8 +6,9 @@
 
 /* ------------------------------------------------------------
    1. GOOGLE FONTS IMPORT
+   Fonty jsou načítány přes <link> tagy v HTML <head> pro lepší
+   výkon (nedochází k blokování renderingu jako u @import).
    ------------------------------------------------------------ */
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600&display=swap');
 
 /* ------------------------------------------------------------
    2. CSS PROMĚNNÉ
@@ -546,18 +547,91 @@ a:hover {
     background: var(--color-bg);
 }
 
-.reviews__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
+.reviews__grid,
+#reviewsList.reviews__grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+    gap: 1.25rem !important;
+    align-items: stretch;
+    margin-bottom: 2.5rem;
 }
 
-.review-card {
+#reviewsList.reviews__grid > * {
+    min-width: 0;
+}
+
+@media (max-width: 520px) {
+    .reviews__grid,
+    #reviewsList.reviews__grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+.reviews__summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    margin: 0 auto 2rem;
+    padding: 1.25rem 1.5rem;
+    max-width: 320px;
     background: var(--gradient-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    padding: 1rem;
+    text-align: center;
+    box-shadow: var(--glow-purple);
+}
+
+.reviews__summary-score {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.reviews__summary-stars {
+    color: #f7c948;
+    letter-spacing: 2px;
+    font-size: 1.1rem;
+}
+
+.reviews__summary-text {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+}
+
+.review-card,
+#reviewsList .review-card {
+    display: flex !important;
+    flex-direction: column;
+    width: 100%;
+    background: #1f1830;
+    border: 1px solid rgba(155, 89, 182, 0.55);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.2rem;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+}
+
+#reviewsList .reviews__hint {
+    grid-column: 1 / -1;
+    text-align: center;
+}
+
+.review-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-primary);
+    opacity: 1;
+}
+
+.review-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(195, 155, 211, 0.85);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), var(--glow-purple);
 }
 
 .review-card__header {
@@ -565,29 +639,36 @@ a:hover {
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .review-card__name {
     color: var(--color-text);
-    font-size: 0.95rem;
+    font-size: 1rem;
+    font-weight: 700;
 }
 
 .review-card__source {
-    font-size: 0.75rem;
-    color: var(--color-text-dark);
+    font-size: 0.72rem;
+    color: var(--color-primary-light);
+    background: rgba(155, 89, 182, 0.15);
+    border: 1px solid rgba(155, 89, 182, 0.25);
+    padding: 0.2rem 0.45rem;
+    border-radius: 999px;
+    white-space: nowrap;
 }
 
 .review-card__rating {
     color: #f7c948;
-    letter-spacing: 1px;
-    margin-bottom: 0.5rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
 }
 
 .review-card__comment {
     color: var(--color-text-muted);
     font-size: 0.9rem;
-    line-height: 1.6;
+    line-height: 1.7;
 }
 
 .reviews__hint {
@@ -603,7 +684,9 @@ a:hover {
     background: var(--gradient-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    padding: 1.25rem;
+    padding: 1.4rem;
+    margin-top: 0.75rem;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
 }
 
 .reviews__form {
@@ -1581,6 +1664,11 @@ a:hover {
     .admin__table th,
     .admin__table td {
         padding: 0.75rem 1rem;
+    }
+
+    .review-card__header {
+        align-items: flex-start;
+        flex-direction: column;
     }
 }
 

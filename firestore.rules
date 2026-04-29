@@ -1,0 +1,144 @@
+// ============================================================
+//  FIRESTORE SECURITY RULES — Studio Violet
+// ============================================================
+//  Jak nasadit:
+//    1. Otevři https://console.firebase.google.com
+//    2. Projekt "studio-violet" → Firestore Database → Rules
+//    3. Zkopíruj celý obsah tohoto souboru a klikni "Publish"
+//
+//  Logika přístupu:
+//    - Veřejnost (nepřihlášený): může POUZE vytvářet (create)
+//      záznamy s omezenými poli — čtení cizích dat zakázáno.
+//    - Admin (přihlášen přes Firebase Auth): plný přístup.
+// ============================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----------------------------------------------------------
+    //  POMOCNÉ FUNKCE
+    // ----------------------------------------------------------
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Allowlist polí — klient nesmí posílat pole navíc (např. status: "confirmed")
+    function hasOnly(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isShortString(value, maxLen) {
+      return value is string && value.size() > 0 && value.size() <= maxLen;
+    }
+
+    // ----------------------------------------------------------
+    //  REZERVACE  /reservations/{docId}
+    //
+    //  Veřejnost: create — ale POUZE s status="pending"
+    //             (klient si nemůže sám rezervaci potvrdit)
+    //  Admin:     read / update / delete
+    // ----------------------------------------------------------
+    match /reservations/{docId} {
+
+      allow read, update, delete: if isAuthenticated();
+
+      allow create: if
+        hasOnly([
+          'clientName', 'clientEmail', 'clientPhone',
+          'serviceId', 'serviceName', 'duration', 'price',
+          'date', 'time', 'clientNote',
+          'status', 'createdAt'
+        ])
+        && request.resource.data.status == 'pending'
+        && isShortString(request.resource.data.clientName, 100)
+        && isShortString(request.resource.data.clientEmail, 200)
+        && isShortString(request.resource.data.date, 10)
+        && isShortString(request.resource.data.time, 5)
+        && isShortString(request.resource.data.serviceId, 100);
+    }
+
+    // ----------------------------------------------------------
+    //  LEGACY REZERVACE  /Rezervace/{docId}
+    //  Stejná pravidla — zachováno pro zpětnou kompatibilitu
+    // ----------------------------------------------------------
+    match /Rezervace/{docId} {
+
+      allow read, update, delete: if isAuthenticated();
+
+      allow create: if
+        hasOnly([
+          'clientName', 'clientEmail', 'clientPhone',
+          'serviceId', 'serviceName', 'duration', 'price',
+          'date', 'time', 'clientNote',
+          'status', 'createdAt'
+        ])
+        && request.resource.data.status == 'pending'
+        && isShortString(request.resource.data.clientName, 100)
+        && isShortString(request.resource.data.clientEmail, 200)
+        && isShortString(request.resource.data.date, 10)
+        && isShortString(request.resource.data.time, 5)
+        && isShortString(request.resource.data.serviceId, 100);
+    }
+
+    // ----------------------------------------------------------
+    //  ANALYTIKA  /analytics/{docId}
+    //
+    //  Veřejnost: create — pouze povolená pole, bez čtení cizích dat
+    //  Admin:     read / update / delete
+    // ----------------------------------------------------------
+    match /analytics/{docId} {
+
+      allow read, update, delete: if isAuthenticated();
+
+      allow create: if
+        hasOnly([
+          'type', 'data', 'sessionId', 'userId',
+          'timestamp', 'url', 'referrer', 'userAgent', 'locale'
+        ])
+        && isShortString(request.resource.data.type, 100)
+        && isShortString(request.resource.data.sessionId, 200);
+    }
+
+    // ----------------------------------------------------------
+    //  RECENZE  /reviews/{docId}
+    //
+    //  Veřejnost: create — MUSÍ mít approved=false, status="pending"
+    //                       (klient si recenzi sám neschválí)
+    //             read   — pouze approved=true && visible!=false
+    //  Admin:     plný přístup
+    // ----------------------------------------------------------
+    match /reviews/{docId} {
+
+      allow read: if isAuthenticated()
+                  || (resource.data.approved == true
+                      && resource.data.visible != false);
+
+      allow update, delete: if isAuthenticated();
+
+      allow create: if
+        hasOnly([
+          'clientName', 'rating', 'comment',
+          'source', 'approved', 'status', 'visible', 'createdAt'
+        ])
+        && request.resource.data.approved == false
+        && request.resource.data.status == 'pending'
+        && isShortString(request.resource.data.clientName, 100)
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5
+        && request.resource.data.comment is string
+        && request.resource.data.comment.size() >= 10
+        && request.resource.data.comment.size() <= 2000;
+    }
+
+    // ----------------------------------------------------------
+    //  FALLBACK — vše ostatní zakázáno
+    // ----------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+  }
+}

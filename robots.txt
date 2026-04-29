@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /config/
+
+Allow: /
+
+Sitemap: https://www.studioviolet.cz/sitemap.xml
