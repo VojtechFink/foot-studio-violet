@@ -79,14 +79,6 @@ function initializeContactData() {
         emailLink.setAttribute('aria-label', `Napsat e-mail na ${CONTACT_CONFIG.email}`);
     }
 
-    // ========================================================
-    // DEBUG: Vypis do konzole
-    // ========================================================
-    console.log('✓ Konfigurace byla úspěšně načtena:', {
-        phone: CONTACT_CONFIG.phone,
-        email: CONTACT_CONFIG.email,
-        address: CONTACT_CONFIG.address,
-        operatorName: CONTACT_CONFIG.operatorName,
-    });
+    console.log('✓ Konfigurace byla úspěšně načtena.');
 }
 
