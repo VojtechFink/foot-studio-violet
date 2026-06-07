@@ -195,11 +195,10 @@ a:hover {
    ------------------------------------------------------------ */
 .navbar {
     position: fixed;
-    top: 0;
+    top: env(safe-area-inset-top, 0px);
     left: 0;
     right: 0;
-    height: calc(var(--nav-height) + env(safe-area-inset-top, 0px));
-    padding-top: env(safe-area-inset-top, 0px);
+    height: var(--nav-height);
     z-index: 1000;
     transition: var(--transition);
     background: transparent;
@@ -1621,7 +1620,7 @@ a:hover {
 @media (max-width: 768px) {
     .navbar__links {
         position: fixed;
-        top: var(--nav-height);
+        top: calc(env(safe-area-inset-top, 0px) + var(--nav-height));
         left: 0;
         right: 0;
         background: rgba(10, 10, 15, 0.98);
