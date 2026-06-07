@@ -87,10 +87,6 @@ class ServicesRenderer {
         const badge = this._createBadge(service);
 
         card.innerHTML = `
-            <div class="service-card__icon" aria-hidden="true">
-                ${service.icon}
-            </div>
-
             ${badge}
 
             <div class="service-card__body">
