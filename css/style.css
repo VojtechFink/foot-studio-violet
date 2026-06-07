@@ -312,13 +312,13 @@ a:hover {
     transition: var(--transition);
 }
 
-.navbar__hamburger.open span:nth-child(1) {
+.navbar__hamburger--open span:nth-child(1) {
     transform: translateY(7px) rotate(45deg);
 }
-.navbar__hamburger.open span:nth-child(2) {
+.navbar__hamburger--open span:nth-child(2) {
     opacity: 0;
 }
-.navbar__hamburger.open span:nth-child(3) {
+.navbar__hamburger--open span:nth-child(3) {
     transform: translateY(-7px) rotate(-45deg);
 }
 
@@ -1635,7 +1635,7 @@ a:hover {
         border-bottom: 1px solid rgba(155, 89, 182, 0.3);
     }
 
-    .navbar__links.open {
+    .navbar__links--open {
         transform: translateY(0);
         opacity: 1;
         pointer-events: all;
